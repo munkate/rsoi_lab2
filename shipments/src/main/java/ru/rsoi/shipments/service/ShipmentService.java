@@ -17,4 +17,6 @@ public interface ShipmentService {
     List<ShipmentInfo> getAll();
 
     List<ShipmentInfo> findAllByDeliveryId(Integer del_id);
+
+    void deleteAllByDeliveryId(Integer del_id);
 }

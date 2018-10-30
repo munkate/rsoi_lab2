@@ -44,5 +44,11 @@ public class ShipmentController {
         return shipmentService.findAllByDeliveryId(del_id);
     }
 
+    @DeleteMapping("/deleteAll/{id}")
+    public void deleteAllByDeliveryId(@PathVariable Integer id)
+    {
+        shipmentService.deleteAllByDeliveryId(id);
+    }
+
 
 }

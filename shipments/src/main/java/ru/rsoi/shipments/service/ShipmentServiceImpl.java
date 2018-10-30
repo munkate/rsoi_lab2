@@ -60,6 +60,11 @@ public class ShipmentServiceImpl implements ShipmentService {
                                  .collect(Collectors.toList());
     }
 
+    @Override
+    public void deleteAllByDeliveryId(Integer del_id) {
+        shipmentRepository.deleteAllByDeliveryId(del_id);
+    }
+
     @NonNull
     private ShipmentInfo buildModel(Shipment shipment) {
         ShipmentInfo model = new ShipmentInfo();

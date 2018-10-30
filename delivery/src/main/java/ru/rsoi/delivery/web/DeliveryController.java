@@ -25,7 +25,7 @@ public class DeliveryController {
         return deliveryService.findAll();
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public void deleteDelivery(@PathVariable Integer id) {
         deliveryService.deleteDeliveryById(id);
     }

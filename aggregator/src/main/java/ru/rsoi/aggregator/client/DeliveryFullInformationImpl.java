@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -63,5 +64,27 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
         response.put("ship",ship_model);
         response.put( "shipments",shipment_model);
         return response;
+    }
+
+    @Override
+    public void deleteDelivery(Integer del_id) {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpDelete httpDelete = new HttpDelete("http://localhost:8081/shipments/deleteAll/" + del_id+ "");
+            try (CloseableHttpResponse httpResponse = httpClient.execute(httpDelete)) {
+                LOGGER.info("All shipments with del_id="+del_id+" deleted.");
+            }
+        } catch (IOException e) {
+            LOGGER.error("Exception caught.", e);
+        }
+
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpDelete httpDelete = new HttpDelete("http://localhost:8083/deliveries/" + del_id + "");
+            try (CloseableHttpResponse httpResponse = httpClient.execute(httpDelete)) {
+                LOGGER.info("Delivery with id="+del_id+" deleted.");
+            }
+        } catch (IOException e) {
+            LOGGER.error("Exception caught.", e);
+        }
+
     }
 }
