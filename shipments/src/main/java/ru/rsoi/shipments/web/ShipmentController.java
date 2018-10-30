@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.rsoi.shipments.model.ShipmentInfo;
 import ru.rsoi.shipments.service.ShipmentService;
 
+import java.text.ParseException;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @RestController
@@ -26,6 +28,13 @@ public class ShipmentController {
     @PostMapping("/create")
     public void createShipment(@RequestBody ShipmentInfo shipment) {
         shipmentService.createShipment(shipment);
+    }
+
+    @PostMapping("/createAgr")
+    public void createShipmentAgr(@RequestBody LinkedHashMap<String,Object> shipment) throws ParseException
+    {
+        ShipmentInfo new_shipment = shipmentService.getModelFromHashMap(shipment);
+        shipmentService.createShipment(new_shipment);
     }
 
     @PostMapping("/edit")

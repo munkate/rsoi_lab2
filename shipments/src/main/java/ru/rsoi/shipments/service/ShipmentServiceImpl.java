@@ -4,9 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import ru.rsoi.shipments.entity.Shipment;
+import ru.rsoi.shipments.entity.enums.Unit;
 import ru.rsoi.shipments.model.ShipmentInfo;
 import ru.rsoi.shipments.repository.ShipmentRepository;
 
+import java.text.ParseException;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,7 +21,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 
     @Override
     public void createShipment(ShipmentInfo shipment) {
-        Shipment shipment1 = new Shipment(shipment.getTitle(), shipment.getDeclare_value(), shipment.getUnit_id());
+        Shipment shipment1 = new Shipment(shipment.getTitle(), shipment.getDeclare_value(), shipment.getUnit_id(), shipment.getUid(), shipment.getDel_id());
         shipmentRepository.save(shipment1);
     }
 
@@ -29,6 +32,20 @@ public class ShipmentServiceImpl implements ShipmentService {
                                  .stream()
                                  .map(this::buildModel)
                                  .collect(Collectors.toList());
+    }
+
+    @Override
+    public ShipmentInfo getModelFromHashMap(LinkedHashMap<String, Object> shipment) {
+        ShipmentInfo model = new ShipmentInfo();
+
+        model.setTitle((String)shipment.get("title"));
+        model.setDeclare_value((Integer) shipment.get("declare_value"));
+        Unit unit = Unit.valueOf((Integer) shipment.get("unit_id"));
+        model.setUnit_id(unit);
+        model.setDel_id((Integer) shipment.get("del_id"));
+        model.setUid((Integer)shipment.get("uid"));
+        return model;
+
     }
 
     @Override

@@ -1,7 +1,10 @@
 package ru.rsoi.shipments.service;
 
+import ru.rsoi.shipments.entity.Shipment;
 import ru.rsoi.shipments.model.ShipmentInfo;
 
+import java.text.ParseException;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public interface ShipmentService {
@@ -19,4 +22,6 @@ public interface ShipmentService {
     List<ShipmentInfo> findAllByDeliveryId(Integer del_id);
 
     void deleteAllByDeliveryId(Integer del_id);
+
+    ShipmentInfo getModelFromHashMap(LinkedHashMap<String,Object> shipment) throws ParseException;
 }

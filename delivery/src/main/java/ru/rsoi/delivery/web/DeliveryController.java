@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.rsoi.delivery.model.DeliveryModel;
 import ru.rsoi.delivery.service.DeliveryService;
 
+import java.text.ParseException;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @RestController
@@ -33,6 +35,13 @@ public class DeliveryController {
     @PostMapping("/createdelivery")
     public void createDelivery(@RequestBody DeliveryModel model) {
         deliveryService.createDelivery(model);
+    }
+
+    @PostMapping("/createdeliveryAgr")
+    public void createDeliveryAgr(@RequestBody LinkedHashMap<String,Object> model) throws ParseException {
+        DeliveryModel del = deliveryService.getModelFromHashMap(model);
+
+        deliveryService.createDelivery(del);
     }
 
     @PatchMapping("/editdelivery")

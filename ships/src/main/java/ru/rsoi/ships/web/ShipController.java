@@ -10,7 +10,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/ships")
-
 public class ShipController {
     @Autowired
     private ShipService shipService;

@@ -3,11 +3,18 @@ package ru.rsoi.delivery.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import ru.rsoi.delivery.entity.Delivery;
 import ru.rsoi.delivery.model.DeliveryModel;
 import ru.rsoi.delivery.model.UserModel;
 import ru.rsoi.delivery.repository.DeliveryRepository;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +30,27 @@ public class DeliveryServiceImpl implements DeliveryService {
         Delivery new_delivery = new Delivery(delivery.getDeparture_date(), delivery.getArrive_date(),
                 delivery.getOrigin(), delivery.getDestination(), delivery.getShip_id(), delivery.getUser_id(), delivery.getUid());
         deliveryRepository.save(new_delivery);
+    }
+    @Override
+    public DeliveryModel getModelFromHashMap(LinkedHashMap<String,Object> model) throws ParseException {
+        DeliveryModel del = new DeliveryModel();
+
+        DateFormat format = new SimpleDateFormat("yyyy-mm-dd");
+        Date dep_date = format.parse((String)model.get("departure_date"));
+        Date arr_date = format.parse((String)model.get("arrive_date"));
+        String origin = (String)model.get("origin");
+        del.setOrigin(origin);
+        del.setDestination((String)model.get("destination"));
+        int uid = (Integer)model.get("uid");
+        int user_id = (Integer)model.get("user_id");
+        int ship_id = (Integer)model.get("ship_id");
+        del.setUid(uid);
+        del.setUser_id(user_id);
+        del.setShip_id(ship_id);
+        del.setDeparture_date(dep_date);
+        del.setArrive_date(arr_date);
+
+       return del;
     }
 
     @Override

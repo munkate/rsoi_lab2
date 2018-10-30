@@ -1,5 +1,7 @@
 package ru.rsoi.delivery.entity;
 
+import org.springframework.lang.Nullable;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;
@@ -11,26 +13,26 @@ public class Delivery {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
+    @Nullable
     @Column(name = "departure_date")
     private Date departure_date;
-
+    @Nullable
     @Column(name = "arrive_date")
     private Date arrive_date;
-
+    @Nullable
     @Column(name = "origin", length = 20)
     private String origin;
-
+    @Nullable
     @Column(name = "destination", length = 20)
     private String destination;
-
+    @Nullable
     @Column(name = "ship_id")
     private Integer ship_id;
-
+    @Nullable
     //  @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @Column(name = "user_id", nullable = false)
     private Integer user_id;
-
+    @Nullable
     @Column(name = "uid", unique = true)
     private long uid;
 

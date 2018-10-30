@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.rsoi.aggregator.client.DeliveryFullInformation;
 
+import java.util.LinkedHashMap;
+
 @RestController
 @RequestMapping("/agr")
 public class AggregatorController {
@@ -20,5 +22,11 @@ public class AggregatorController {
     public void deleteDelivery (@PathVariable Integer id)
     {
         deliveryFullService.deleteDelivery(id);
+    }
+
+    @PostMapping("/users/{user_id}/delivery")
+    public void createDelivery(@RequestBody JSONObject data)
+    {
+        deliveryFullService.createDelivery(data);
     }
 }

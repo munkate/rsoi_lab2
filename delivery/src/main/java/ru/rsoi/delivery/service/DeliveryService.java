@@ -5,6 +5,8 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import ru.rsoi.delivery.model.DeliveryModel;
 
+import java.text.ParseException;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public interface DeliveryService {
@@ -24,5 +26,6 @@ public interface DeliveryService {
     @Nullable
     List<DeliveryModel> findAllByUserId(Integer id);
 
+    DeliveryModel getModelFromHashMap(LinkedHashMap<String,Object> model) throws ParseException;
 
 }
