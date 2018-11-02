@@ -1,11 +1,9 @@
-package ru.rsoi.aggregator.web;
+package ru.rsoi.gateway.web;
 
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.rsoi.aggregator.client.DeliveryFullInformation;
-
-import java.util.LinkedHashMap;
+import ru.rsoi.gateway.client.DeliveryFullInformation;
 
 @RestController
 @RequestMapping("/agr")

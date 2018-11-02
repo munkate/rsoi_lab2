@@ -1,5 +1,7 @@
 package ru.rsoi.ships.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ public class ShipServiceImpl implements ShipService {
 
     @Autowired
     private ShipRepository shipRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShipServiceImpl.class);
 
 
     @Override
@@ -27,6 +30,7 @@ public class ShipServiceImpl implements ShipService {
         ship.setType_id(shipInfo.getType_id());
         ship.setYear(shipInfo.getYear());
         shipRepository.saveAndFlush(ship);
+        LOGGER.info("Ship updated.");
     }
 
 
@@ -41,6 +45,7 @@ public class ShipServiceImpl implements ShipService {
     @Override
     public void delete(Integer id) {
         shipRepository.deleteById(id);
+        LOGGER.info("Ship deleted.");
     }
 
     @Override
@@ -53,6 +58,7 @@ public class ShipServiceImpl implements ShipService {
 
         Ship ship = new Ship(shipInfo.getSh_title(), shipInfo.getSkipper(), shipInfo.getYear(), shipInfo.getCapacity(), shipInfo.getType_id(), shipInfo.getUid());
         shipRepository.save(ship);
+        LOGGER.info("Ship created.");
     }
 
     @NonNull

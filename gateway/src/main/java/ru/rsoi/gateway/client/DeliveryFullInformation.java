@@ -1,6 +1,5 @@
-package ru.rsoi.aggregator.client;
+package ru.rsoi.gateway.client;
 
-import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 public interface DeliveryFullInformation {

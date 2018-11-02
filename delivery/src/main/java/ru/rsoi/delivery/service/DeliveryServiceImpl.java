@@ -1,15 +1,14 @@
 package ru.rsoi.delivery.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 import ru.rsoi.delivery.entity.Delivery;
 import ru.rsoi.delivery.model.DeliveryModel;
-import ru.rsoi.delivery.model.UserModel;
 import ru.rsoi.delivery.repository.DeliveryRepository;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class DeliveryServiceImpl implements DeliveryService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DeliveryServiceImpl.class);
 
     @Autowired
     private DeliveryRepository deliveryRepository;
@@ -29,6 +29,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
         Delivery new_delivery = new Delivery(delivery.getDeparture_date(), delivery.getArrive_date(),
                 delivery.getOrigin(), delivery.getDestination(), delivery.getShip_id(), delivery.getUser_id(), delivery.getUid());
+        LOGGER.info("Delivery created.");
         deliveryRepository.save(new_delivery);
     }
     @Override
@@ -76,7 +77,9 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     public void deleteDeliveryById(Integer id) {
+
         deliveryRepository.deleteById(id);
+        LOGGER.info("Delivery deleted.");
 
     }
 
@@ -89,7 +92,9 @@ public class DeliveryServiceImpl implements DeliveryService {
         new_delivery.setOrigin(delivery.getOrigin());
         new_delivery.setShip_id(delivery.getShip_id());
         new_delivery.setUser_id(delivery.getUser_id());
+
         deliveryRepository.saveAndFlush(new_delivery);
+        LOGGER.info("Delivery updated.");
 
     }
 

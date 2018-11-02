@@ -1,5 +1,7 @@
 package ru.rsoi.shipments.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
@@ -18,11 +20,13 @@ import java.util.stream.Collectors;
 public class ShipmentServiceImpl implements ShipmentService {
     @Autowired
     private ShipmentRepository shipmentRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShipmentServiceImpl.class);
 
     @Override
     public void createShipment(ShipmentInfo shipment) {
         Shipment shipment1 = new Shipment(shipment.getTitle(), shipment.getDeclare_value(), shipment.getUnit_id(), shipment.getUid(), shipment.getDel_id());
         shipmentRepository.save(shipment1);
+        LOGGER.info("Shipment created.");
     }
 
 
@@ -50,7 +54,9 @@ public class ShipmentServiceImpl implements ShipmentService {
 
     @Override
     public void delete(Integer id) {
+
         shipmentRepository.deleteById(id);
+        LOGGER.info("Shipment deleted");
     }
 
     @Override
@@ -67,6 +73,7 @@ public class ShipmentServiceImpl implements ShipmentService {
         new_shipment.setUid(shipment.getUid());
         new_shipment.setUnit_id(shipment.getUnit_id());
         shipmentRepository.saveAndFlush(new_shipment);
+        LOGGER.info("Shipment updated");
     }
 
     @Override
@@ -79,7 +86,9 @@ public class ShipmentServiceImpl implements ShipmentService {
 
     @Override
     public void deleteAllByDeliveryId(Integer del_id) {
+
         shipmentRepository.deleteAllByDeliveryId(del_id);
+        LOGGER.info("Shipments deleted");
     }
 
     @NonNull
