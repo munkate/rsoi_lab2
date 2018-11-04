@@ -1,5 +1,7 @@
 package ru.rsoi.shipments.service;
 
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ru.rsoi.shipments.entity.Shipment;
@@ -8,6 +10,7 @@ import ru.rsoi.shipments.model.ShipmentInfo;
 import java.text.ParseException;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public interface ShipmentService {
 
@@ -25,5 +28,6 @@ public interface ShipmentService {
 
     void deleteAllByDeliveryId(Integer del_id);
 
-    ShipmentInfo getModelFromHashMap(LinkedHashMap<String,Object> shipment) throws ParseException;
+    List<ShipmentInfo> getModelFromHashMap(LinkedHashMap<String,Object> shipment) throws ParseException;
+    void createShipments(JSONArray shipments);
 }

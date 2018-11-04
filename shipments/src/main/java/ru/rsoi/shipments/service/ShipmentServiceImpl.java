@@ -1,5 +1,6 @@
 package ru.rsoi.shipments.service;
 
+import net.minidev.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -8,12 +9,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.rsoi.shipments.entity.Shipment;
 import ru.rsoi.shipments.entity.enums.Unit;
 import ru.rsoi.shipments.model.ShipmentInfo;
 import ru.rsoi.shipments.repository.ShipmentRepository;
 
-import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,27 +39,59 @@ public class ShipmentServiceImpl implements ShipmentService {
         }
     }
     @Override
+    @Transactional
+    public void createShipments(JSONArray shipments) {
+        List<Shipment> new_shipments = new ArrayList<Shipment>();
+
+        LinkedHashMap<String,Object> buf = null;
+        try{
+            for (int i=0; i<shipments.toArray().length;i++){
+                Shipment shipment = new Shipment();
+               buf = (LinkedHashMap<String,Object>)shipments.get(i);
+               // for (int j=0; j<buf.values().toArray().length;j++) {
+                    shipment.setTitle((String)buf.get("title"));
+                    shipment.setDeclare_value((Integer) buf.get("declare_value"));
+                    shipment.setUnit_id(Unit.valueOf((Integer) buf.get("unit_id")) );
+                    shipment.setUid((Integer) buf.get("uid"));
+                    shipment.setDel_id((Integer) buf.get("del_id"));
+                new_shipments.add(shipment);
+            }
+           // for (Shipment _entity: new_shipments) {
+
+                shipmentRepository.saveAll(new_shipments);
+
+           // }
+            LOGGER.info("Shipment created.");
+        }
+        catch (RuntimeException e){
+            LOGGER.error("Failed to create shipment");
+        }
+    }
+    @Override
     public Page<ShipmentInfo> getAll(Pageable pageable) {
         try{
         return shipmentRepository.findAll(pageable).map(this::buildModel);
         }
         catch (RuntimeException e){
-            LOGGER.error("Failed to get all shioments");
+            LOGGER.error("Failed to get all shipments");
             return null;
         }
     }
 
     @Override
-    public ShipmentInfo getModelFromHashMap(LinkedHashMap<String, Object> shipment) {
-        ShipmentInfo model = new ShipmentInfo();
+    public List<ShipmentInfo> getModelFromHashMap(LinkedHashMap<String, Object> shipment) {
+        List<ShipmentInfo> models = null;
     try{
-        model.setTitle((String)shipment.get("title"));
-        model.setDeclare_value((Integer) shipment.get("declare_value"));
-        Unit unit = Unit.valueOf((Integer) shipment.get("unit_id"));
-        model.setUnit_id(unit);
-        model.setDel_id((Integer) shipment.get("del_id"));
-        model.setUid((Integer)shipment.get("uid"));
-        return model;
+        for (int i=0; i<shipment.values().toArray().length;i++)
+        {
+            models.get(i).setTitle((String)shipment.get("title"));
+            models.get(i).setDeclare_value((Integer) shipment.get("declare_value"));
+            Unit unit = Unit.valueOf((Integer) shipment.get("unit_id"));
+            models.get(i).setUnit_id(unit);
+            models.get(i).setDel_id((Integer) shipment.get("del_id"));
+            models.get(i).setUid((Integer)shipment.get("uid"));
+    }
+        return models;
     }
     catch(RuntimeException e){
         LOGGER.error("Failed get model from hashmap");
@@ -139,6 +173,7 @@ public class ShipmentServiceImpl implements ShipmentService {
         }
         return null;
     }
+
 
 
 }

@@ -18,7 +18,7 @@ public enum Unit {
         }
     }
 
-    public static Unit valueOf(int unit) {
+    public static Unit valueOf(Integer unit) {
         return (Unit) map.get(unit);
     }
 

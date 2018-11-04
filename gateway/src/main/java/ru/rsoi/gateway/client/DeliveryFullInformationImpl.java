@@ -3,6 +3,7 @@ package ru.rsoi.gateway.client;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -25,9 +26,7 @@ import ru.rsoi.models.ShipInfo;
 import ru.rsoi.models.ShipmentInfo;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class DeliveryFullInformationImpl implements DeliveryFullInformation {
@@ -124,7 +123,7 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
         }
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost httpPost = new HttpPost("http://localhost:8081/shipments/createAgr");
-            httpPost.setEntity(new StringEntity(JSONObject.toJSONString((Map<String, ?>) data.get("shipments")), ContentType.APPLICATION_JSON));
+            httpPost.setEntity(new StringEntity(JSONArray.toJSONString((List<? extends Object>) data.get("shipments")), ContentType.APPLICATION_JSON));
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {
                 LOGGER.info("Shipment created.");
             }

@@ -23,4 +23,5 @@ public interface ShipmentRepository extends PagingAndSortingRepository<Shipment,
     @Modifying
     @Query("DELETE FROM Shipment as s Where s.del_id =:del_id")
     void deleteAllByDeliveryId(@Param("del_id")Integer del_id);
+
 }

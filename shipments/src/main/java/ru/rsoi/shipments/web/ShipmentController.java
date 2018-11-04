@@ -1,5 +1,7 @@
 package ru.rsoi.shipments.web;
 
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +14,7 @@ import ru.rsoi.shipments.service.ShipmentService;
 import java.text.ParseException;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/shipments")
@@ -37,10 +40,10 @@ public class ShipmentController {
     }
 
     @PostMapping("/createAgr")
-    public void createShipmentAgr(@RequestBody LinkedHashMap<String,Object> shipment) throws ParseException
+    public void createShipmentAgr(@RequestBody JSONArray shipment) throws ParseException
     {
-        ShipmentInfo new_shipment = shipmentService.getModelFromHashMap(shipment);
-        shipmentService.createShipment(new_shipment);
+       // List<ShipmentInfo> new_shipment = shipmentService.getModelFromHashMap(shipment);
+        shipmentService.createShipments(shipment);
     }
 
     @PostMapping("/edit")
