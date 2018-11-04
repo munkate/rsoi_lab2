@@ -1,6 +1,10 @@
 package ru.rsoi.shipments.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 import ru.rsoi.shipments.model.ShipmentInfo;
 import ru.rsoi.shipments.service.ShipmentService;
@@ -21,8 +25,10 @@ public class ShipmentController {
     }
 
     @GetMapping
-    public List<ShipmentInfo> findAllShipments() {
-        return shipmentService.getAll();
+    public Page<ShipmentInfo> findAllShipments(@RequestParam("page") Integer page,@RequestParam("size") Integer size) {
+
+        Pageable request = PageRequest.of(page,size);
+        return shipmentService.getAll(request);
     }
 
     @PostMapping("/create")

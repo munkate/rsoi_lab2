@@ -2,80 +2,99 @@ package ru.rsoi.ships.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import ru.rsoi.ships.entity.Ship;
 import ru.rsoi.ships.model.ShipInfo;
 import ru.rsoi.ships.repository.ShipRepository;
 
-
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 public class ShipServiceImpl implements ShipService {
 
     @Autowired
     private ShipRepository shipRepository;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ShipServiceImpl.class);
 
 
     @Override
     public void editShip(ShipInfo shipInfo) {
-        Ship ship = getEntity(shipInfo);
-        ship.setCapacity(shipInfo.getCapacity());
-        ship.setSh_title(shipInfo.getSh_title());
-        ship.setSkipper(shipInfo.getSkipper());
-        ship.setType_id(shipInfo.getType_id());
-        ship.setYear(shipInfo.getYear());
-        shipRepository.saveAndFlush(ship);
-        LOGGER.info("Ship updated.");
+       try{ Ship ship = getEntity(shipInfo);
+        BeanUtils.copyProperties(shipInfo,ship);
+        shipRepository.save(ship);}
+        catch (RuntimeException e){
+            LOGGER.error("Failed update ship uid={}",shipInfo.getUid());
+            throw new RuntimeException("DAO failed", e);
+        }
+
     }
 
 
     @Override
-    public List<ShipInfo> getAll() {
-        return shipRepository.findAll()
-                .stream()
-                .map(this::buildModel)
-                .collect(Collectors.toList());
+    public Page<ShipInfo> listAllByPage(Pageable pageable) {
+      try{  return shipRepository.findAll(pageable).map(this::buildModel);}
+                catch (RuntimeException e){
+          LOGGER.error("Failed to get all ships");
+          return null;
+                }
     }
 
     @Override
     public void delete(Integer id) {
-        shipRepository.deleteById(id);
-        LOGGER.info("Ship deleted.");
+     try{   shipRepository.deleteById(id);
+        LOGGER.info("Ship deleted.");}
+        catch (RuntimeException e)
+        {
+            LOGGER.error("Failed to delete ship with id={}",id);
+        }
     }
 
     @Override
     public ShipInfo getById(Integer id) {
-        return shipRepository.findById(id).map(this::buildModel).orElse(null);
+      try  { ShipInfo model = buildModel(shipRepository.findByUid(id));
+       return model;}
+       catch (RuntimeException e)
+       {
+           LOGGER.error("Failed to get ship with id={}",id);
+           return null;
+       }
+
     }
 
     @Override
     public void createShip(ShipInfo shipInfo) {
 
-        Ship ship = new Ship(shipInfo.getSh_title(), shipInfo.getSkipper(), shipInfo.getYear(), shipInfo.getCapacity(), shipInfo.getType_id(), shipInfo.getUid());
+      try{  Ship ship = new Ship(shipInfo.getSh_title(), shipInfo.getSkipper(), shipInfo.getYear(), shipInfo.getCapacity(), shipInfo.getType_id(), shipInfo.getUid());
         shipRepository.save(ship);
-        LOGGER.info("Ship created.");
+        LOGGER.info("Ship created.");}
+        catch(RuntimeException e) {
+          LOGGER.error("Failed to create ship");
+        }
     }
 
     @NonNull
     private ShipInfo buildModel(Ship ship) {
         ShipInfo model = new ShipInfo();
-        model.setType_id(ship.getType_id());
-        model.setCapacity(ship.getCapacity());
-        model.setSh_title(ship.getSh_title());
-        model.setSkipper(ship.getSkipper());
-        model.setYear(ship.getYear());
-        model.setUid(ship.getUid());
-        return model;
+       try{ BeanUtils.copyProperties(ship, model);
+        return model;}
+        catch (RuntimeException e){
+           LOGGER.error("Failed to build model");
+           return null;
+        }
     }
 
     @NonNull
     private Ship getEntity(ShipInfo model) {
-        Ship ship = shipRepository.findByUid(model.getUid());
-        return ship;
+       try { Ship ship = shipRepository.findByUid(model.getUid());
+        return ship;}
+        catch (RuntimeException e)
+        {
+            LOGGER.error("Failed to get entity");
+            return null;
+        }
     }
 }

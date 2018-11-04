@@ -2,11 +2,13 @@ package ru.rsoi.ships.web;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 import ru.rsoi.ships.model.ShipInfo;
 import ru.rsoi.ships.service.ShipService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/ships")
@@ -20,8 +22,9 @@ public class ShipController {
     }
 
     @GetMapping
-    public List<ShipInfo> findAllShips() {
-        return shipService.getAll();
+    public Page<ShipInfo> findAllShips(@RequestParam("page") Integer page,@RequestParam("size") Integer size) {
+        Pageable request = PageRequest.of(page,size);
+        return shipService.listAllByPage(request);
     }
 
     @DeleteMapping("/delete/{id}")

@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import ru.rsoi.shipments.entity.Shipment;
@@ -11,7 +12,7 @@ import ru.rsoi.shipments.entity.Shipment;
 import java.util.List;
 
 
-public interface ShipmentRepository extends JpaRepository<Shipment, Integer> {
+public interface ShipmentRepository extends PagingAndSortingRepository<Shipment, Integer> {
     @Query("SELECT p FROM Shipment p WHERE p.uid=:uid")
     Shipment findByUid(@Param("uid") long uid);
 

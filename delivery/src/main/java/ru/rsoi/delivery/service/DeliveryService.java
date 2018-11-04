@@ -1,6 +1,8 @@
 package ru.rsoi.delivery.service;
 
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import ru.rsoi.delivery.model.DeliveryModel;
@@ -14,7 +16,7 @@ public interface DeliveryService {
 
     void createDelivery(DeliveryModel delivery);
 
-    List<DeliveryModel> findAll();
+    Page<DeliveryModel> findAll(Pageable pageable);
 
     @Nullable
     DeliveryModel getDeliveryById(@NonNull Integer id);
@@ -24,7 +26,7 @@ public interface DeliveryService {
     void deleteDeliveryById(@NonNull Integer id);
 
     @Nullable
-    List<DeliveryModel> findAllByUserId(Integer id);
+    Page<DeliveryModel> findAllByUserId(Integer id, Pageable pageable);
 
     DeliveryModel getModelFromHashMap(LinkedHashMap<String,Object> model) throws ParseException;
 

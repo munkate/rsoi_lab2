@@ -2,13 +2,16 @@ package ru.rsoi.delivery.web;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 import ru.rsoi.delivery.model.DeliveryModel;
 import ru.rsoi.delivery.service.DeliveryService;
 
 import java.text.ParseException;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 @RestController
 @RequestMapping("/deliveries")
@@ -23,8 +26,9 @@ public class DeliveryController {
     }
 
     @GetMapping
-    public List<DeliveryModel> findAllDeliveries() {
-        return deliveryService.findAll();
+    public Page<DeliveryModel> findAllDeliveries(@Param("page") Integer page, @Param("size") Integer size) {
+        Pageable request = PageRequest.of(page,size);
+        return deliveryService.findAll(request);
     }
 
     @DeleteMapping("/{id}")
@@ -50,7 +54,15 @@ public class DeliveryController {
     }
 
     @GetMapping("/users/{id}/deliveries")
-    public List<DeliveryModel> findAllDeliveriesById(@PathVariable Integer id) {
-        return deliveryService.findAllByUserId(id);
+    public Page<DeliveryModel> findAllDeliveriesById(@PathVariable Integer id, @RequestParam(value = "page") Integer page,@RequestParam(value = "size", required = false) Integer size) {
+        Pageable request;
+        if (page!=null&& size!=null) request = PageRequest.of(page,size);
+        else request = PageRequest.of(0,20);
+
+        return deliveryService.findAllByUserId(id, request);
+    }
+    @GetMapping("/users/{id}/deliveries/{del_id}")
+    public DeliveryModel findUserDeliveryById(@PathVariable Integer del_id) {
+        return deliveryService.getDeliveryById(del_id);
     }
 }

@@ -1,6 +1,7 @@
 package ru.rsoi.gateway.client;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.minidev.json.JSONObject;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -14,12 +15,17 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ru.rsoi.gateway.response.DeliveryPageImpl;
 import ru.rsoi.models.DeliveryModel;
 import ru.rsoi.models.ShipInfo;
 import ru.rsoi.models.ShipmentInfo;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +33,23 @@ import java.util.Map;
 public class DeliveryFullInformationImpl implements DeliveryFullInformation {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeliveryFullInformationImpl.class);
+
+    @Override
+    public JSONObject getUserDeliveriesFullInfo(Integer user_id, Pageable pageable) {
+            JSONObject response = new JSONObject();
+            DeliveryPageImpl<DeliveryModel> del_model = null;
+            ObjectMapper mapper = new ObjectMapper();
+            try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+                HttpGet httpGet = new HttpGet("http://localhost:8083/deliveries/users/"+user_id+"/deliveries?page="+pageable.getPageNumber()+"&size="+pageable.getPageSize());
+                try (CloseableHttpResponse httpResponse = httpClient.execute(httpGet)) {
+                    del_model = mapper.readValue(EntityUtils.toString(httpResponse.getEntity()), new TypeReference<DeliveryPageImpl<DeliveryModel>>(){});
+                }
+            } catch (IOException e) {
+                LOGGER.error("Exception caught.", e);
+            }
+            response.put("deliveries",del_model);
+            return response;
+    }
 
     @Override
     public JSONObject getDeliveryFullInfo(Integer del_id) {

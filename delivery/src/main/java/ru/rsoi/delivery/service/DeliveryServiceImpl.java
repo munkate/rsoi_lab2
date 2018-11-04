@@ -2,7 +2,10 @@ package ru.rsoi.delivery.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import ru.rsoi.delivery.entity.Delivery;
@@ -12,7 +15,6 @@ import ru.rsoi.delivery.repository.DeliveryRepository;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,89 +28,108 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     public void createDelivery(DeliveryModel delivery) {
-
+        try{
         Delivery new_delivery = new Delivery(delivery.getDeparture_date(), delivery.getArrive_date(),
                 delivery.getOrigin(), delivery.getDestination(), delivery.getShip_id(), delivery.getUser_id(), delivery.getUid());
-        LOGGER.info("Delivery created.");
+
         deliveryRepository.save(new_delivery);
+        LOGGER.info("Delivery created.");
+        }
+        catch (RuntimeException e){
+            LOGGER.error("Delivery didn't create.");
+        }
     }
     @Override
     public DeliveryModel getModelFromHashMap(LinkedHashMap<String,Object> model) throws ParseException {
-        DeliveryModel del = new DeliveryModel();
-
-        DateFormat format = new SimpleDateFormat("yyyy-mm-dd");
-        Date dep_date = format.parse((String)model.get("departure_date"));
-        Date arr_date = format.parse((String)model.get("arrive_date"));
-        String origin = (String)model.get("origin");
-        del.setOrigin(origin);
+     try {   DeliveryModel del = new DeliveryModel();
+       DateFormat format = new SimpleDateFormat("yyyy-mm-dd");
+        del.setOrigin((String)model.get("origin"));
         del.setDestination((String)model.get("destination"));
-        int uid = (Integer)model.get("uid");
-        int user_id = (Integer)model.get("user_id");
-        int ship_id = (Integer)model.get("ship_id");
-        del.setUid(uid);
-        del.setUser_id(user_id);
-        del.setShip_id(ship_id);
-        del.setDeparture_date(dep_date);
-        del.setArrive_date(arr_date);
-
+        del.setUid((Integer)model.get("uid"));
+        del.setUser_id((Integer)model.get("user_id"));
+        del.setShip_id((Integer)model.get("ship_id"));
+        del.setDeparture_date(format.parse((String)model.get("departure_date")));
+        del.setArrive_date(format.parse((String)model.get("arrive_date")));
+        LOGGER.info("Successful getting model from hashmap");
        return del;
+     }
+       catch (RuntimeException e){
+         LOGGER.error("Failed to get model from hashmap");
+         return null;
+       }
     }
+
 
     @Override
     public DeliveryModel getDeliveryById(Integer id) {
-        return deliveryRepository.findById(id).map(this::buildModel).orElse(null);
+       try{
+           DeliveryModel model = buildModel( deliveryRepository.findByUid(id));
+           return model;
+       }
+       catch(RuntimeException e)
+       {
+           LOGGER.error("Delivery with id={} didn't find",id);
+           return null;
+       }
+
+        }
+
+
+    @Override
+    public Page<DeliveryModel> findAll(Pageable pageable) {
+      try {  return deliveryRepository.findAll(pageable).map(this::buildModel);}
+      catch (RuntimeException e){
+          LOGGER.error("Failed to get all deliveries.");
+          return null;
+                }
     }
 
     @Override
-    public List<DeliveryModel> findAll() {
-        return deliveryRepository.findAll()
-                .stream()
-                .map(this::buildModel)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<DeliveryModel> findAllByUserId(Integer id) {
-        return deliveryRepository.findAllByUserId(id)
-                .stream()
-                .map(this::buildModel)
-                .collect(Collectors.toList());
+    public Page<DeliveryModel> findAllByUserId(Integer id, Pageable pageable) {
+        try {
+            return deliveryRepository.findAllByUserId(id,pageable).map(this::buildModel);
+        }
+        catch (RuntimeException e){
+            LOGGER.error("Failed to get all user's deliveries.");
+            return null;
+        }
     }
 
     @Override
     public void deleteDeliveryById(Integer id) {
 
-        deliveryRepository.deleteById(id);
-        LOGGER.info("Delivery deleted.");
+        try{deliveryRepository.deleteById(id);}
+        catch (RuntimeException e) {
+            LOGGER.error("Failed to delete delivery with id={}",id);
+        }
+
 
     }
 
     @Override
     public void editDelivery(DeliveryModel delivery) {
-        Delivery new_delivery = getEntity(delivery);
-        new_delivery.setArrive_date(delivery.getArrive_date());
-        new_delivery.setDeparture_date(delivery.getDeparture_date());
-        new_delivery.setDestination(delivery.getDestination());
-        new_delivery.setOrigin(delivery.getOrigin());
-        new_delivery.setShip_id(delivery.getShip_id());
-        new_delivery.setUser_id(delivery.getUser_id());
+        try {
+            Delivery new_delivery = getEntity(delivery);
+            BeanUtils.copyProperties(delivery, new_delivery);
 
-        deliveryRepository.saveAndFlush(new_delivery);
-        LOGGER.info("Delivery updated.");
+            deliveryRepository.save(new_delivery);
+        }
+        catch (RuntimeException e) {
+            LOGGER.error("Delivery didn't update");
+            throw new RuntimeException("DAO failed", e);
+        }
 
     }
 
     @NonNull
     private DeliveryModel buildModel(Delivery delivery) {
         DeliveryModel model = new DeliveryModel();
-        model.setArrive_date(delivery.getArrive_date());
-        model.setDeparture_date(delivery.getDeparture_date());
-        model.setDestination(delivery.getDestination());
-        model.setOrigin(delivery.getOrigin());
-        model.setUid(delivery.getUid());
-        model.setShip_id(delivery.getShip_id());
-        model.setUser_id(delivery.getUser_id());
-        return model;
+     try {   BeanUtils.copyProperties(delivery,model);
+        return model;}
+        catch (RuntimeException e){
+         LOGGER.error("Failed build model");
+        }
+        return null;
     }
 
     @NonNull

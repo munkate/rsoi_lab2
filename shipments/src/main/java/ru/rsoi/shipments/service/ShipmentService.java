@@ -1,5 +1,7 @@
 package ru.rsoi.shipments.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import ru.rsoi.shipments.entity.Shipment;
 import ru.rsoi.shipments.model.ShipmentInfo;
 
@@ -17,7 +19,7 @@ public interface ShipmentService {
 
     void editShipment(ShipmentInfo shipment);
 
-    List<ShipmentInfo> getAll();
+    Page<ShipmentInfo> getAll(Pageable pageable);
 
     List<ShipmentInfo> findAllByDeliveryId(Integer del_id);
 

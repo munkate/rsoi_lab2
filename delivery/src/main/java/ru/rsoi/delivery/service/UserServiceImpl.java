@@ -1,5 +1,6 @@
 package ru.rsoi.delivery.service;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -48,13 +49,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void editUser(UserModel user) {
         User new_user = getEntity(user);
-        new_user.setAddress(user.getAddress());
-        new_user.setBank(user.getBank());
-        new_user.setFirst_name(user.getFirst_name());
-        new_user.setLast_name(user.getLast_name());
-        new_user.setSecond_name(user.getSecond_name());
-        new_user.setInn(user.getInn());
-        new_user.setUid(user.getUid());
+        BeanUtils.copyProperties(user,new_user);
         userRepository.saveAndFlush(new_user);
 
     }
@@ -62,13 +57,7 @@ public class UserServiceImpl implements UserService {
     @NonNull
     private UserModel buildUserModel(User user) {
         UserModel model = new UserModel();
-        model.setFirst_name(user.getFirst_name());
-        model.setLast_name(user.getLast_name());
-        model.setSecond_name(user.getSecond_name());
-        model.setAddress(user.getAddress());
-        model.setBank(user.getBank());
-        model.setInn(user.getInn());
-        model.setUid(user.getUid());
+        BeanUtils.copyProperties(user,model);
         return model;
     }
 

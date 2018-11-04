@@ -1,8 +1,8 @@
 package ru.rsoi.ships.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import ru.rsoi.ships.model.ShipInfo;
-
-import java.util.List;
 
 public interface ShipService {
     void delete(Integer id);
@@ -13,5 +13,5 @@ public interface ShipService {
 
     void createShip(ShipInfo ship);
 
-    List<ShipInfo> getAll();
+    Page<ShipInfo> listAllByPage(Pageable pageable);
 }
