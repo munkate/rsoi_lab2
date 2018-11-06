@@ -19,6 +19,20 @@ public class DeliveryModel {
 
     private Integer user_id;
 
+    public DeliveryModel() {
+
+    }
+
+    public DeliveryModel(Date departure_date, Date arrive_date, String origin, String destination, Integer ship_id, Integer user_id, long uid) {
+        this.arrive_date = arrive_date;
+        this.departure_date = departure_date;
+        this.destination = destination;
+        this.origin = origin;
+        this.ship_id = ship_id;
+        this.user_id = user_id;
+        this.uid = uid;
+    }
+
     public Integer getShip_id() {
         return ship_id;
     }

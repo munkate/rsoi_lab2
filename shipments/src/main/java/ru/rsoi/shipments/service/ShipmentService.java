@@ -14,11 +14,11 @@ import java.util.Map;
 
 public interface ShipmentService {
 
-    void createShipment(ShipmentInfo ship);
+    long createShipment(ShipmentInfo ship);
 
-    void delete(Integer id);
+    void delete(long id);
 
-    ShipmentInfo getById(Integer id);
+    ShipmentInfo getById(long id);
 
     void editShipment(ShipmentInfo shipment);
 
@@ -28,6 +28,6 @@ public interface ShipmentService {
 
     void deleteAllByDeliveryId(Integer del_id);
 
-    List<ShipmentInfo> getModelFromHashMap(LinkedHashMap<String,Object> shipment) throws ParseException;
+
     void createShipments(JSONArray shipments);
 }

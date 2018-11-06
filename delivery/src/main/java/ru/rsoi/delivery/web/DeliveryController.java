@@ -33,7 +33,7 @@ public class DeliveryController {
 
     @DeleteMapping("/{id}")
     public void deleteDelivery(@PathVariable Integer id) {
-        deliveryService.deleteDeliveryById(id);
+        deliveryService.deleteDeliveryByUid(id);
     }
 
     @PostMapping("/createdelivery")
@@ -48,9 +48,11 @@ public class DeliveryController {
         deliveryService.createDelivery(del);
     }
 
-    @PatchMapping("/editdelivery")
-    public void editDelivery(@RequestBody DeliveryModel model) {
-        deliveryService.editDelivery(model);
+    @PostMapping("/editdelivery")
+    public void editDelivery(@RequestBody LinkedHashMap<String,Object> model) throws ParseException {
+        DeliveryModel del = deliveryService.getModelFromHashMap(model);
+
+        deliveryService.editDelivery(del);
     }
 
     @GetMapping("/users/{id}/deliveries")

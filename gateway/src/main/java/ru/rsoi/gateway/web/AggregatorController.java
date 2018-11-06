@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import ru.rsoi.gateway.client.DeliveryFullInformation;
+import ru.rsoi.models.DeliveryModel;
 
 @RestController
 @RequestMapping("/agr")
@@ -33,5 +34,11 @@ public class AggregatorController {
     public void createDelivery(@RequestBody JSONObject data)
     {
         deliveryFullService.createDelivery(data);
+    }
+
+    @PatchMapping("/editdelivery")
+    public void editDelivery(@RequestBody JSONObject model) {
+
+        deliveryFullService.editDelivery(model);
     }
 }

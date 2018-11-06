@@ -14,16 +14,16 @@ import java.util.List;
 public interface DeliveryService {
 
 
-    void createDelivery(DeliveryModel delivery);
+    long createDelivery(DeliveryModel delivery);
 
     Page<DeliveryModel> findAll(Pageable pageable);
 
     @Nullable
-    DeliveryModel getDeliveryById(@NonNull Integer id);
+    DeliveryModel getDeliveryById(@NonNull long id);
 
     void editDelivery(DeliveryModel delivery);
 
-    void deleteDeliveryById(@NonNull Integer id);
+    void deleteDeliveryByUid(@NonNull long id);
 
     @Nullable
     Page<DeliveryModel> findAllByUserId(Integer id, Pageable pageable);

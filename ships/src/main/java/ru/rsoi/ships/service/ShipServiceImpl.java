@@ -9,8 +9,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import ru.rsoi.ships.entity.Ship;
+import ru.rsoi.ships.entity.enums.ShipType;
 import ru.rsoi.ships.model.ShipInfo;
 import ru.rsoi.ships.repository.ShipRepository;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.LinkedHashMap;
 
 @Service
 public class ShipServiceImpl implements ShipService {
@@ -44,8 +50,8 @@ public class ShipServiceImpl implements ShipService {
     }
 
     @Override
-    public void delete(Integer id) {
-     try{   shipRepository.deleteById(id);
+    public void delete(long id) {
+     try{   shipRepository.deleteByUid(id);
         LOGGER.info("Ship deleted.");}
         catch (RuntimeException e)
         {
@@ -54,8 +60,9 @@ public class ShipServiceImpl implements ShipService {
     }
 
     @Override
-    public ShipInfo getById(Integer id) {
-      try  { ShipInfo model = buildModel(shipRepository.findByUid(id));
+    public ShipInfo getById(long id) {
+      try  {
+          ShipInfo model = buildModel(shipRepository.findByUid(id));
        return model;}
        catch (RuntimeException e)
        {
@@ -66,17 +73,19 @@ public class ShipServiceImpl implements ShipService {
     }
 
     @Override
-    public void createShip(ShipInfo shipInfo) {
+    public long createShip(ShipInfo shipInfo) {
 
       try{  Ship ship = new Ship(shipInfo.getSh_title(), shipInfo.getSkipper(), shipInfo.getYear(), shipInfo.getCapacity(), shipInfo.getType_id(), shipInfo.getUid());
         shipRepository.save(ship);
-        LOGGER.info("Ship created.");}
+        LOGGER.info("Ship created.");
+      return ship.getUid();}
         catch(RuntimeException e) {
           LOGGER.error("Failed to create ship");
+          return 0;
         }
     }
 
-    @NonNull
+
     private ShipInfo buildModel(Ship ship) {
         ShipInfo model = new ShipInfo();
        try{ BeanUtils.copyProperties(ship, model);
@@ -94,6 +103,20 @@ public class ShipServiceImpl implements ShipService {
         catch (RuntimeException e)
         {
             LOGGER.error("Failed to get entity");
+            return null;
+        }
+    }
+
+    @Override
+    public ShipInfo getModelFromHashMap(LinkedHashMap<String,Object> model){
+        try {   ShipInfo shipInfo = new ShipInfo((String)model.get("title"), (String)model.get("skipper"),
+                (Integer)model.get("year"), (Integer)model.get("capacity"), ShipType.valueOf((Integer)model.get("type_id")), (Integer)model.get("uid"));
+
+            LOGGER.info("Successful getting model from hashmap");
+            return shipInfo;
+        }
+        catch (RuntimeException e){
+            LOGGER.error("Failed to get model from hashmap");
             return null;
         }
     }

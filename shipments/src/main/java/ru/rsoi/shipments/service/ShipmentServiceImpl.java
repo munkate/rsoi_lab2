@@ -28,14 +28,16 @@ public class ShipmentServiceImpl implements ShipmentService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ShipmentServiceImpl.class);
 
     @Override
-    public void createShipment(ShipmentInfo shipment) {
+    public long createShipment(ShipmentInfo shipment) {
         try{
         Shipment shipment1 = new Shipment(shipment.getTitle(), shipment.getDeclare_value(), shipment.getUnit_id(), shipment.getUid(), shipment.getDel_id());
         shipmentRepository.save(shipment1);
         LOGGER.info("Shipment created.");
+        return shipment1.getUid();
         }
         catch (RuntimeException e){
             LOGGER.error("Failed to create shipment");
+            return 0;
         }
     }
     @Override
@@ -52,7 +54,7 @@ public class ShipmentServiceImpl implements ShipmentService {
                     shipment.setTitle((String)buf.get("title"));
                     shipment.setDeclare_value((Integer) buf.get("declare_value"));
                     shipment.setUnit_id(Unit.valueOf((Integer) buf.get("unit_id")) );
-                    shipment.setUid((Integer) buf.get("uid"));
+                    shipment.setUid((long) buf.get("uid"));
                     shipment.setDel_id((Integer) buf.get("del_id"));
                 new_shipments.add(shipment);
             }
@@ -78,32 +80,12 @@ public class ShipmentServiceImpl implements ShipmentService {
         }
     }
 
-    @Override
-    public List<ShipmentInfo> getModelFromHashMap(LinkedHashMap<String, Object> shipment) {
-        List<ShipmentInfo> models = null;
-    try{
-        for (int i=0; i<shipment.values().toArray().length;i++)
-        {
-            models.get(i).setTitle((String)shipment.get("title"));
-            models.get(i).setDeclare_value((Integer) shipment.get("declare_value"));
-            Unit unit = Unit.valueOf((Integer) shipment.get("unit_id"));
-            models.get(i).setUnit_id(unit);
-            models.get(i).setDel_id((Integer) shipment.get("del_id"));
-            models.get(i).setUid((Integer)shipment.get("uid"));
-    }
-        return models;
-    }
-    catch(RuntimeException e){
-        LOGGER.error("Failed get model from hashmap");
-        return null;
-    }
 
-    }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(long id) {
 
-       try{ shipmentRepository.deleteById(id);
+       try{ shipmentRepository.deleteByUid(id);
         LOGGER.info("Shipment deleted");}
         catch(RuntimeException e){
            LOGGER.error("Failed to delete shipment with id={}",id);
@@ -111,7 +93,7 @@ public class ShipmentServiceImpl implements ShipmentService {
     }
 
     @Override
-    public ShipmentInfo getById(Integer id) {
+    public ShipmentInfo getById(long id) {
       try{  ShipmentInfo model = buildModel(shipmentRepository.findByUid(id));
       return model;}
       catch (RuntimeException e){

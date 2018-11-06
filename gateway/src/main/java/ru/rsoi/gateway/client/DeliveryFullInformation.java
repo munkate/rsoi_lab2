@@ -2,6 +2,7 @@ package ru.rsoi.gateway.client;
 
 import net.minidev.json.JSONObject;
 import org.springframework.data.domain.Pageable;
+import ru.rsoi.models.DeliveryModel;
 
 public interface DeliveryFullInformation {
 
@@ -13,4 +14,6 @@ public interface DeliveryFullInformation {
     void deleteDelivery(Integer del_id);
 
     void createDelivery(JSONObject data);
+
+    void editDelivery(JSONObject delivery);
 }

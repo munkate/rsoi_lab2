@@ -4,14 +4,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ru.rsoi.ships.model.ShipInfo;
 
-public interface ShipService {
-    void delete(Integer id);
+import java.text.ParseException;
+import java.util.LinkedHashMap;
 
-    ShipInfo getById(Integer id);
+public interface ShipService {
+    void delete(long id);
+
+    ShipInfo getById(long id);
 
     void editShip(ShipInfo ship);
 
-    void createShip(ShipInfo ship);
+    long createShip(ShipInfo ship);
 
     Page<ShipInfo> listAllByPage(Pageable pageable);
+    ShipInfo getModelFromHashMap(LinkedHashMap<String,Object> model);
 }

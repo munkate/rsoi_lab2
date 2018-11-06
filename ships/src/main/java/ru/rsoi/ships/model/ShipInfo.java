@@ -18,6 +18,17 @@ public class ShipInfo {
 
     private ShipType type_id;
 
+    public ShipInfo(){}
+
+    public ShipInfo(String title, String skipper, Integer year, Integer capacity, ShipType type, long uid) {
+        this.sh_title = title;
+        this.skipper = skipper;
+        this.year = year;
+        this.capacity = capacity;
+        this.type_id = type;
+        this.uid = uid;
+    }
+
     public String getSh_title() {
         return sh_title;
     }

@@ -1,7 +1,6 @@
 package ru.rsoi.gateway.client;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -16,17 +15,16 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.rsoi.gateway.response.DeliveryPageImpl;
+import ru.rsoi.gateway.response.ResponsePageImpl;
 import ru.rsoi.models.DeliveryModel;
 import ru.rsoi.models.ShipInfo;
 import ru.rsoi.models.ShipmentInfo;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class DeliveryFullInformationImpl implements DeliveryFullInformation {
@@ -34,14 +32,27 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
     private static final Logger LOGGER = LoggerFactory.getLogger(DeliveryFullInformationImpl.class);
 
     @Override
+    public void editDelivery(JSONObject delivery) {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpPost httpPost = new HttpPost("http://localhost:8083/deliveries/editdelivery");
+            httpPost.setEntity(new StringEntity(JSONObject.toJSONString((Map<String, ?>) delivery), ContentType.APPLICATION_JSON));
+            try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {
+                LOGGER.info("Delivery updated");
+            }
+        } catch (IOException e) {
+            LOGGER.error("Exception caught.", e);
+        }
+    }
+
+    @Override
     public JSONObject getUserDeliveriesFullInfo(Integer user_id, Pageable pageable) {
             JSONObject response = new JSONObject();
-            DeliveryPageImpl<DeliveryModel> del_model = null;
+            ResponsePageImpl<DeliveryModel> del_model = null;
             ObjectMapper mapper = new ObjectMapper();
             try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
                 HttpGet httpGet = new HttpGet("http://localhost:8083/deliveries/users/"+user_id+"/deliveries?page="+pageable.getPageNumber()+"&size="+pageable.getPageSize());
                 try (CloseableHttpResponse httpResponse = httpClient.execute(httpGet)) {
-                    del_model = mapper.readValue(EntityUtils.toString(httpResponse.getEntity()), new TypeReference<DeliveryPageImpl<DeliveryModel>>(){});
+                    del_model = mapper.readValue(EntityUtils.toString(httpResponse.getEntity()), new TypeReference<ResponsePageImpl<DeliveryModel>>(){});
                 }
             } catch (IOException e) {
                 LOGGER.error("Exception caught.", e);

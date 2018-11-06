@@ -27,16 +27,18 @@ public class DeliveryServiceImpl implements DeliveryService {
     private DeliveryRepository deliveryRepository;
 
     @Override
-    public void createDelivery(DeliveryModel delivery) {
+    public long createDelivery(DeliveryModel delivery) {
         try{
         Delivery new_delivery = new Delivery(delivery.getDeparture_date(), delivery.getArrive_date(),
                 delivery.getOrigin(), delivery.getDestination(), delivery.getShip_id(), delivery.getUser_id(), delivery.getUid());
 
         deliveryRepository.save(new_delivery);
         LOGGER.info("Delivery created.");
+        return new_delivery.getUid();
         }
         catch (RuntimeException e){
             LOGGER.error("Delivery didn't create.");
+            return 0;
         }
     }
     @Override
@@ -61,7 +63,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
 
     @Override
-    public DeliveryModel getDeliveryById(Integer id) {
+    public DeliveryModel getDeliveryById(long id) {
        try{
            DeliveryModel model = buildModel( deliveryRepository.findByUid(id));
            return model;
@@ -96,9 +98,9 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     @Override
-    public void deleteDeliveryById(Integer id) {
+    public void deleteDeliveryByUid(long id) {
 
-        try{deliveryRepository.deleteById(id);}
+        try{deliveryRepository.deleteByUid(id);}
         catch (RuntimeException e) {
             LOGGER.error("Failed to delete delivery with id={}",id);
         }
