@@ -18,6 +18,7 @@ public class ShipController {
 
     @GetMapping("/{id}")
     public ShipInfo ShipById(@PathVariable Integer id) {
+
         return shipService.getById(id);
     }
 
