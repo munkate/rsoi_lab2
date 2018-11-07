@@ -1,105 +1,155 @@
 package ru.rsoi.ships;
 
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
+import org.mockito.Matchers;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.rsoi.ships.entity.enums.ShipType;
 import ru.rsoi.ships.model.ShipInfo;
 import ru.rsoi.ships.service.ShipService;
+import ru.rsoi.ships.web.ShipController;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static junit.framework.TestCase.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@WebMvcTest(ShipController.class)
 public class ShipsApplicationTests {
 
     @Autowired
-    @Mock
+    private MockMvc mockMvc;
+
+    @MockBean
     private ShipService shipService;
+
+    private static final String TITLE = "1";
+    private static final String SKIPPER = "Ivanov";
+    private static final Integer YEAR = 1986;
+    private static final Integer CAPACITY = 200;
+    private static final ShipType TYPE = ShipType.TANKER;
+    private static final long UID = 125;
+
 
 
     @Test
     public void testfindAll_ShipsFound_ShouldReturnFoundShipEntries() throws Exception {
-        ShipInfo first = new ShipInfo("1","Ivanov",1986,200, ShipType.TANKER,125);
-        ShipInfo second = new ShipInfo("2","Gusev",1985,500,ShipType.BULK_CARRIER,124);
-        List<ShipInfo> ships = new ArrayList<ShipInfo>();
-        ships.add(first);
-        ships.add(second);
+        Page<ShipInfo> response = new PageImpl<>(Collections.singletonList(getMockEntity()));
 
-        shipService.createShip(first);
-        shipService.createShip(second);
+        when(shipService.listAllByPage(any(Pageable.class))).thenReturn(response);
 
         Pageable pageable = PageRequest.of(0,2);
 
-        Page<ShipInfo> t  = shipService.listAllByPage(pageable);
+        mockMvc.perform(MockMvcRequestBuilders.get("/ships?page="+pageable.getPageNumber()+"&size="+pageable.getPageSize()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalPages").value(response.getTotalPages()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalElements").value(response.getTotalElements()));
 
-        assertThat(t.getSize()).isEqualTo(2);
-        assertThat(t.getContent().get(0).getUid()).isEqualTo(first.getUid());
-        assertThat(t.getContent().get(1).getUid()).isEqualTo(second.getUid());
-
-        shipService.delete(first.getUid());
-        shipService.delete(second.getUid());
     }
 
 
     @Test
-    public void testFindById() {
-        ShipInfo first = new ShipInfo("1","Ivanov",1986,200, ShipType.TANKER,200000015);
+    public void testFindById() throws Exception {
+        ShipInfo response = getMockEntity();
 
-        shipService.createShip(first);
+        when(shipService.getById(any(long.class))).thenReturn(response);
 
-        ShipInfo response = shipService.getById(200000015);
-
-        assertThat(response.getSh_title()).isEqualTo(first.getSh_title());
-
-        shipService.delete(first.getUid());
+        mockMvc.perform(get("/ships/{id}", UID))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(jsonPath("$.sh_title").value(response.getSh_title().toString()))
+                .andExpect(jsonPath("$.skipper").value(response.getSkipper()));
     }
 
-    @Test
-    public void testDeleteShip() {
-        ShipInfo ship = new ShipInfo("1","Ivanov",1986,200, ShipType.TANKER,200000015);
+   @Test
+    public void testDeleteShip() throws Exception {
+        ShipInfo ship = getMockEntity();
+       ObjectMapper mapper = new ObjectMapper();
 
-        shipService.createShip(ship);
+       doNothing().when(shipService).delete(any(long.class));
+       try {
+           mockMvc.perform(MockMvcRequestBuilders.delete("/ships/delete/{id}",UID)
+                   .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                   .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                   .content(mapper.writeValueAsBytes(ship)))
+                   .andExpect(status().isOk());
 
-        ShipInfo response = shipService.getById(200000015);
-
-        shipService.delete(ship.getUid());
-        response = shipService.getById(200000015);
-        assertThat(response).isEqualTo(null);
+       } catch (Exception e) {
+           e.printStackTrace();
+       }
     }
 
     @Test
     public void testCreateShip() {
-        ShipInfo ship = new ShipInfo("1","Ivanov",1986,200, ShipType.TANKER,200000015);
+        ShipInfo ship = getMockEntity();
 
-       long response =  shipService.createShip(ship);
-        assertThat(response).isEqualTo(ship.getUid());
+        when(shipService.createShip(any(ShipInfo.class))).thenReturn(UID);
 
-        shipService.delete(ship.getUid());
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            mockMvc.perform(post("/ships/createship")
+                    .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .content(mapper.writeValueAsBytes(ship)))
+                    .andExpect(status().isOk());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
 
     @Test
     public void testEditShip() {
-        ShipInfo ship = new ShipInfo("1","Ivanov",1986,200, ShipType.TANKER,200000015);
+        ShipInfo ship = getMockEntity();
+        ShipInfo new_ship = new ShipInfo("1", "Petrov", 1997, 200, ShipType.TANKER,200000015);
+        ObjectMapper mapper = new ObjectMapper();
+        doAnswer(new Answer<Void>() {
+            @Override public Void answer(InvocationOnMock invocation) {
+                ShipInfo actualShip = (ShipInfo) invocation.getArguments()[0];
+                assertEquals(new_ship, actualShip);
+                return null;
+            }
+        }).when(shipService).editShip(any(ShipInfo.class));
+        try {
+            mockMvc.perform(post("/ships/edit")
+                    .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .content(mapper.writeValueAsBytes(new_ship)))
+                    .andExpect(status().isOk());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        shipService.createShip(ship);
-        shipService.editShip(new ShipInfo("1", "Petrov", 1997, 200, ShipType.TANKER,200000015));
-        ShipInfo new_ship = shipService.getById(ship.getUid());
+    }
 
-        assertThat(new_ship.getSkipper()).isEqualTo("Petrov");
-        assertThat(new_ship.getYear()).isEqualTo(1997);
-
-        shipService.delete(ship.getUid());
+    private ShipInfo getMockEntity()
+    {
+        return new ShipInfo(TITLE,SKIPPER,YEAR,CAPACITY, TYPE,UID);
     }
 
 

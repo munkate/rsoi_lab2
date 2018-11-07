@@ -6,7 +6,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import ru.rsoi.ships.entity.Ship;
 import ru.rsoi.ships.entity.enums.ShipType;
@@ -96,7 +95,7 @@ public class ShipServiceImpl implements ShipService {
         }
     }
 
-    @NonNull
+
     private Ship getEntity(ShipInfo model) {
        try { Ship ship = shipRepository.findByUid(model.getUid());
         return ship;}

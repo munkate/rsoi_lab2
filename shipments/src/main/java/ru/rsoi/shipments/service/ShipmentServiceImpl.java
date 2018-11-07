@@ -7,7 +7,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.rsoi.shipments.entity.Shipment;
@@ -45,7 +44,7 @@ public class ShipmentServiceImpl implements ShipmentService {
     public void createShipments(JSONArray shipments) {
         List<Shipment> new_shipments = new ArrayList<Shipment>();
 
-        LinkedHashMap<String,Object> buf = null;
+        LinkedHashMap<String,Object> buf = new LinkedHashMap<String,Object>();
         try{
             for (int i=0; i<shipments.toArray().length;i++){
                 Shipment shipment = new Shipment();
@@ -53,8 +52,8 @@ public class ShipmentServiceImpl implements ShipmentService {
                // for (int j=0; j<buf.values().toArray().length;j++) {
                     shipment.setTitle((String)buf.get("title"));
                     shipment.setDeclare_value((Integer) buf.get("declare_value"));
-                    shipment.setUnit_id(Unit.valueOf((Integer) buf.get("unit_id")) );
-                    shipment.setUid((long) buf.get("uid"));
+                    shipment.setUnit_id(Unit.valueOf((String) buf.get("unit_id")) );
+                    shipment.setUid((Integer) buf.get("uid"));
                     shipment.setDel_id((Integer) buf.get("del_id"));
                 new_shipments.add(shipment);
             }
@@ -136,7 +135,7 @@ public class ShipmentServiceImpl implements ShipmentService {
         }
     }
 
-    @NonNull
+
     private Shipment getEntity(ShipmentInfo model) {
       try{  Shipment shipment = shipmentRepository.findByUid(model.getUid());
         return shipment;}
@@ -145,7 +144,7 @@ public class ShipmentServiceImpl implements ShipmentService {
           return null;
         }
     }
-    @NonNull
+
     private ShipmentInfo buildModel(Shipment shipment) {
         ShipmentInfo model = new ShipmentInfo();
         try {   BeanUtils.copyProperties(shipment,model);

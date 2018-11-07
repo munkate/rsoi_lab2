@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 import ru.rsoi.ships.model.ShipInfo;
 import ru.rsoi.ships.service.ShipService;
@@ -17,7 +16,7 @@ public class ShipController {
     private ShipService shipService;
 
     @GetMapping("/{id}")
-    public ShipInfo ShipById(@PathVariable Integer id) {
+    public ShipInfo ShipById(@PathVariable long id) {
 
         return shipService.getById(id);
     }

@@ -17,9 +17,9 @@
 
     <modules>
         <module>delivery</module>
-        <module>gateway</module>
-        <module>shipments</module>
         <module>ships</module>
+        <module>shipments</module>
+        <module>gateway</module>
     </modules>
 
     <properties>

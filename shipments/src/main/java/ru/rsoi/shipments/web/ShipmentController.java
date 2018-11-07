@@ -28,7 +28,7 @@ public class ShipmentController {
     }
 
     @GetMapping
-    public Page<ShipmentInfo> findAllShipments(@RequestParam("page") Integer page,@RequestParam("size") Integer size) {
+    public Page<ShipmentInfo> findAllShipments(@RequestParam(value = "page", defaultValue = "0") Integer page,@RequestParam(value="size",defaultValue = "2") Integer size) {
 
         Pageable request = PageRequest.of(page,size);
         return shipmentService.getAll(request);

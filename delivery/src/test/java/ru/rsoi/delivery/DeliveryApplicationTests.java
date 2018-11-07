@@ -1,129 +1,162 @@
 package ru.rsoi.delivery;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.rsoi.delivery.model.DeliveryModel;
 import ru.rsoi.delivery.service.DeliveryService;
+import ru.rsoi.delivery.web.DeliveryController;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import static junit.framework.TestCase.assertEquals;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@WebMvcTest(DeliveryController.class)
 public class DeliveryApplicationTests {
 
     @Autowired
-    @Mock
+    private MockMvc mockMvc;
+    @MockBean
     private DeliveryService deliveryService;
 
+    private static final String ORIGIN = "1";
+    private static final String DESTINATION = "1";
+    private static final Integer SHIP_ID = 1;
+    private static final Integer USER_ID = 1;
+    private static final long UID = 1;
 
     @Test
     public void testfindAll_DeliveryFound_ShouldReturnFoundDeliveryEntries() throws Exception {
-        DeliveryModel first = new DeliveryModel(new SimpleDateFormat("yyyy-mm-dd").parse("2018-10-23"), new SimpleDateFormat("yyyy-mm-dd").parse("2018-10-28"), "Москва","Хабаровск",1,2,13);
-        DeliveryModel second = new DeliveryModel(new SimpleDateFormat("yyyy-mm-dd").parse("2018-10-22"), new SimpleDateFormat("yyyy-mm-dd").parse("2018-10-28"), "Москва","Ялта",2,1,12);
+        Page<DeliveryModel> response = new PageImpl<>(Collections.singletonList(getMockEntity()));
 
-        deliveryService.createDelivery(first);
-        deliveryService.createDelivery(second);
+        when(deliveryService.findAll(any(Pageable.class))).thenReturn(response);
 
         Pageable pageable = PageRequest.of(0,2);
 
-        Page<DeliveryModel> t  = deliveryService.findAll(pageable);
-
-        assertThat(t.getSize()).isEqualTo(2);
-        assertThat(t.getContent().get(0).getUid()).isEqualTo(first.getUid());
-        assertThat(t.getContent().get(1).getUid()).isEqualTo(second.getUid());
-
-        deliveryService.deleteDeliveryByUid(first.getUid());
-        deliveryService.deleteDeliveryByUid(second.getUid());
+        mockMvc.perform(MockMvcRequestBuilders.get("/deliveries?page="+pageable.getPageNumber()+"&size="+pageable.getPageSize()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalPages").value(response.getTotalPages()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalElements").value(response.getTotalElements()));
     }
 
 
     @Test
-    public void testFindById() {
-        DeliveryModel first = null;
-        try {
-            first = new DeliveryModel(new SimpleDateFormat("yyyy-mm-dd").parse("2018-10-23"), new SimpleDateFormat("yyyy-mm-dd").parse("2018-10-28"), "Москва","Хабаровск",1,2,13);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+    public void testFindById() throws Exception {
+        DeliveryModel first = getMockEntity();
 
-        deliveryService.createDelivery(first);
+        when(deliveryService.getDeliveryById(any(long.class))).thenReturn(first);
 
-        DeliveryModel response = deliveryService.getDeliveryById(13);
-
-        assertThat(response.getUid()).isEqualTo(first.getUid());
-
-
-        deliveryService.deleteDeliveryByUid(first.getUid());
+        mockMvc.perform(get("/deliveries/{id}", UID))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(jsonPath("$.origin").value(first.getOrigin()))
+                .andExpect(jsonPath("$.destination").value(first.getDestination()));
     }
 
     @Test
     public void testDeleteDelivery() {
-        DeliveryModel first = null;
+        DeliveryModel response = getMockEntity();
+        ObjectMapper mapper = new ObjectMapper();
+
+        doNothing().when(deliveryService).deleteDeliveryByUid(any(long.class));
         try {
-            first = new DeliveryModel(new SimpleDateFormat("yyyy-mm-dd").parse("2018-10-23"), new SimpleDateFormat("yyyy-mm-dd").parse("2018-10-28"), "Москва","Хабаровск",1,2,13);
-        } catch (ParseException e) {
+            mockMvc.perform(MockMvcRequestBuilders.delete("/deliveries/{id}",UID)
+                    .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .content(mapper.writeValueAsBytes(response)))
+                    .andExpect(status().isOk());
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
-        deliveryService.createDelivery(first);
-
-        DeliveryModel response = deliveryService.getDeliveryById(13);
-
-        deliveryService.deleteDeliveryByUid(first.getUid());
-        response = deliveryService.getDeliveryById(13);
-        assertThat(response).isEqualTo(null);
     }
 
     @Test
     public void testCreateDelivery() {
-        DeliveryModel delivery = null;
+        DeliveryModel response = getMockEntity();
+
+        when(deliveryService.createDelivery(any(DeliveryModel.class))).thenReturn(UID);
+
+        ObjectMapper mapper = new ObjectMapper();
         try {
-            delivery = new DeliveryModel(new SimpleDateFormat("yyyy-mm-dd").parse("2018-10-23"), new SimpleDateFormat("yyyy-mm-dd").parse("2018-10-28"), "Москва","Хабаровск",1,2,13);
-        } catch (ParseException e) {
+            mockMvc.perform(post("/deliveries/createdelivery")
+                    .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .content(mapper.writeValueAsBytes(response)))
+                    .andExpect(status().isOk());
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-        long response =  deliveryService.createDelivery(delivery);
-        assertThat(response).isEqualTo(delivery.getUid());
-
-        deliveryService.deleteDeliveryByUid(delivery.getUid());
     }
 
     @Test
-    public void testEditDelivery() {
-        DeliveryModel delivery = null;
+    public void testEditDelivery() throws ParseException {
+        DeliveryModel delivery = getMockEntity();
+
+        DeliveryModel new_delivery = new DeliveryModel(new SimpleDateFormat("yyyy-mm-dd").parse("2018-10-23"), new SimpleDateFormat("yyyy-mm-dd").parse("2018-10-28"), "Харьков","Хабаровск",1,2,13);
+
+        ObjectMapper mapper = new ObjectMapper();
+        doAnswer(new Answer<Void>() {
+            @Override public Void answer(InvocationOnMock invocation) {
+                DeliveryModel actualDelivery = (DeliveryModel) invocation.getArguments()[0];
+                assertEquals(new_delivery, actualDelivery);
+                return null;
+            }
+        }).when(deliveryService).editDelivery(any(DeliveryModel.class));
         try {
-            delivery = new DeliveryModel(new SimpleDateFormat("yyyy-mm-dd").parse("2018-10-23"), new SimpleDateFormat("yyyy-mm-dd").parse("2018-10-28"), "Москва","Хабаровск",1,2,13);
-        } catch (ParseException e) {
+            mockMvc.perform(post("/deliveries/editdelivery")
+                    .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .content(mapper.writeValueAsBytes(new_delivery)))
+                    .andExpect(status().isOk());
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
 
-        deliveryService.createDelivery(delivery);
+    }
+
+    private DeliveryModel getMockEntity()
+    {
         try {
-            deliveryService.editDelivery(new DeliveryModel(new SimpleDateFormat("yyyy-mm-dd").parse("2018-10-23"), new SimpleDateFormat("yyyy-mm-dd").parse("2018-10-28"), "Харьков","Хабаровск",1,2,13));
+            return new DeliveryModel(new SimpleDateFormat("yyyy-mm-dd").parse("2018-10-23"),new SimpleDateFormat("yyyy-mm-dd").parse("2018-10-23"),ORIGIN,DESTINATION,SHIP_ID,USER_ID,UID);
         } catch (ParseException e) {
             e.printStackTrace();
+            return null;
         }
-        DeliveryModel new_delivery = deliveryService.getDeliveryById(delivery.getUid());
-
-            assertThat(new_delivery.getOrigin()).isEqualTo("Харьков");
-
-        deliveryService.deleteDeliveryByUid(delivery.getUid());
     }
 
     @Test
