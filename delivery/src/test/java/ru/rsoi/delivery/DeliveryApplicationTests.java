@@ -3,12 +3,10 @@ package ru.rsoi.delivery;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -25,22 +23,14 @@ import ru.rsoi.delivery.web.DeliveryController;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.LinkedHashMap;
 
 import static junit.framework.TestCase.assertEquals;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(DeliveryController.class)
@@ -123,6 +113,31 @@ public class DeliveryApplicationTests {
     }
 
     @Test
+    public void testCreateDeliveryAgr() throws ParseException {
+        LinkedHashMap<String,Object> delivery = new LinkedHashMap<>();
+        delivery.put("departure_date", new SimpleDateFormat("yyyy-mm-dd").parse("2018-10-23"));
+        delivery.put("arrive_date",new SimpleDateFormat("yyyy-mm-dd").parse("2018-10-24"));
+        delivery.put("origin",ORIGIN);
+        delivery.put("destination",DESTINATION);
+        delivery.put("ship_id",SHIP_ID);
+        delivery.put("user_id",USER_ID);
+        delivery.put("uid",UID);
+        when(deliveryService.createDelivery(any(DeliveryModel.class))).thenReturn(UID);
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            mockMvc.perform(post("/deliveries/createdeliveryAgr")
+                    .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .content(mapper.writeValueAsBytes(delivery)))
+                    .andExpect(status().isOk());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Test
     public void testEditDelivery() throws ParseException {
         DeliveryModel delivery = getMockEntity();
 
@@ -137,7 +152,7 @@ public class DeliveryApplicationTests {
             }
         }).when(deliveryService).editDelivery(any(DeliveryModel.class));
         try {
-            mockMvc.perform(post("/deliveries/editdelivery")
+            mockMvc.perform(patch("/deliveries/editdelivery")
                     .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                     .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                     .content(mapper.writeValueAsBytes(new_delivery)))

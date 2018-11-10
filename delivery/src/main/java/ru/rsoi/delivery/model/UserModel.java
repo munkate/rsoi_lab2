@@ -16,6 +16,18 @@ public class UserModel {
 
     private long uid;
 
+    public UserModel() {
+    }
+
+    public UserModel(String last_name, String first_name, String second_name, String address, String bank, String inn) {
+        this.last_name = last_name;
+        this.first_name = first_name;
+        this.second_name = second_name;
+        this.address = address;
+        this.bank = bank;
+        this.inn = inn;
+    }
+
     public String getLast_name() {
         return last_name;
     }

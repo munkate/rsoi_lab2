@@ -110,16 +110,18 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     public void editDelivery(DeliveryModel delivery) {
-        try {
-            Delivery new_delivery = getEntity(delivery);
-            BeanUtils.copyProperties(delivery, new_delivery);
 
-            deliveryRepository.save(new_delivery);
-        }
-        catch (RuntimeException e) {
-            LOGGER.error("Delivery didn't update");
-            throw new RuntimeException("DAO failed", e);
-        }
+             try {
+                Delivery new_delivery = getEntity(delivery);
+                 assert new_delivery != null;
+                 BeanUtils.copyProperties(delivery, new_delivery);
+
+                deliveryRepository.save(new_delivery);
+            }
+            catch (RuntimeException e) {
+                LOGGER.error("Delivery didn't update");
+                throw new RuntimeException("DAO failed", e);
+            }
 
     }
 
@@ -134,10 +136,13 @@ public class DeliveryServiceImpl implements DeliveryService {
         return null;
     }
 
-    @NonNull
+
     private Delivery getEntity(DeliveryModel model) {
-        Delivery delivery = deliveryRepository.findByUid(model.getUid());
-        return delivery;
+        try {
+            Delivery delivery = deliveryRepository.findByUid(model.getUid());
+            return delivery;
+        } catch (RuntimeException e){ return null;}
+
     }
 
 }
