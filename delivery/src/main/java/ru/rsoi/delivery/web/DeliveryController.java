@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 
 @RestController
 @RequestMapping("/deliveries")
+@CrossOrigin
 public class DeliveryController {
 
     @Autowired

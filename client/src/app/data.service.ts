@@ -13,7 +13,7 @@ export class DataService {
 
   constructor(private http: HttpClient) { }
 
-  getShip(id){
+  getShip(id) {
     return this.http.get(`${this.apiURL}/ships/${id}`);
   }
   getShips() {
@@ -28,7 +28,7 @@ export class DataService {
 
   }
 
-  deleteShip(id: number) {
+  deleteShip(id) {
     return this.http.delete(`${this.apiURL}/ships/delete/${id}`);
   }
 

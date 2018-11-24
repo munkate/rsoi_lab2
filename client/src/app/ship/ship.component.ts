@@ -12,28 +12,31 @@ import {Ship} from './ship';
 export class ShipComponent implements OnInit {
 
   ship$: Object;
+  id: number;
 
   constructor(private service: DataService, private route: ActivatedRoute, private router: Router) {
-    this.route.params.subscribe( params => this.ship$ = params.id);
+    this.id = this.route.snapshot.params['id'];
   }
 
   ngOnInit() {
-    this.service.getShip(this.ship$).subscribe(
+    this.service.getShip(this.id).subscribe(
       service => this.ship$ = service);
 
   }
 
-  back() {
-    history.back();
-  }
-
-  delete(ship$) {
-    this.service.deleteShip(Number(this.ship$)).subscribe(res => {
+  delete(id) {
+    this.service.deleteShip(this.id).subscribe(res => {
         this.router.navigate(['ships']);
       }, (err) => {
         console.log(err);
       }
     );
   }
+
+  back() {
+    history.back();
+  }
+
+
 
 }

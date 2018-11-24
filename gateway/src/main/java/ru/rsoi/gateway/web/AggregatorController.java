@@ -11,6 +11,7 @@ import ru.rsoi.models.DeliveryModel;
 
 @RestController
 @RequestMapping("/agr")
+@CrossOrigin
 public class AggregatorController {
     @Autowired
     private DeliveryFullInformation deliveryFullService;

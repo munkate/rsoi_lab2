@@ -11,6 +11,7 @@ import ru.rsoi.ships.service.ShipService;
 
 @RestController
 @RequestMapping("/ships")
+@CrossOrigin
 public class ShipController {
     @Autowired
     private ShipService shipService;

@@ -14,7 +14,7 @@ const routes: Routes = [
     component: ShipAddComponent,
   },
   {
-    path: '/edit',
+    path: 'edit/:id',
     component: ShipEditComponent,
   },
   {

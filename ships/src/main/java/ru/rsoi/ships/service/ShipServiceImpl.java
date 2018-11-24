@@ -16,6 +16,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
+import java.util.Random;
 
 @Service
 public class ShipServiceImpl implements ShipService {
@@ -74,7 +75,10 @@ public class ShipServiceImpl implements ShipService {
     @Override
     public long createShip(ShipInfo shipInfo) {
 
-      try{  Ship ship = new Ship(shipInfo.getSh_title(), shipInfo.getSkipper(), shipInfo.getYear(), shipInfo.getCapacity(), shipInfo.getType_id(), shipInfo.getUid());
+      try{
+          long range = 1234567L;
+          Random r = new Random();
+          Ship ship = new Ship(shipInfo.getSh_title(), shipInfo.getSkipper(), shipInfo.getYear(), shipInfo.getCapacity(), shipInfo.getType_id(), (long)(r.nextDouble()*range));
         shipRepository.save(ship);
         LOGGER.info("Ship created.");
       return ship.getUid();}

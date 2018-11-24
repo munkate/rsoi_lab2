@@ -18,6 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/shipments")
+@CrossOrigin
 public class ShipmentController {
     @Autowired
     private ShipmentService shipmentService;

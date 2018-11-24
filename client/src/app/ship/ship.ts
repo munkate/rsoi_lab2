@@ -1,9 +1,9 @@
 export class Ship {
   uid: number;
-  title: string;
+  sh_title: string;
   skipper: string;
   year: number;
   capacity: number;
-  type: string;
+  type_id: string;
 
 }

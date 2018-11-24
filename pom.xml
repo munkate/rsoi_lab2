@@ -21,6 +21,7 @@
         <module>shipments</module>
         <module>delivery</module>
         <module>gateway</module>
+        <module>client</module>
     </modules>
 
     <properties>
