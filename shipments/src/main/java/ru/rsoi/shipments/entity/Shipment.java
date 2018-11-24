@@ -50,11 +50,14 @@ public class Shipment {
 
     }
 
-    public Shipment(String title, Integer declare_value, Unit unit_id) {
+    public Shipment(String title, Integer declare_value, Unit unit_id, long uid, Integer del_id) {
 
         this.title = title;
         this.declare_value = declare_value;
         this.unit_id = unit_id;
+        this.uid = uid;
+        this.del_id=del_id;
+
     }
 
     public Integer getId() {
