@@ -17,7 +17,7 @@
 
     <button mat-raised-button (click)="delete(ship$)">Удалить</button>
     <button mat-raised-button (click)="back()">Назад</button>
-    <button mat-raised-button routerLink="/edit">Редактировать</button>
+    <button mat-raised-button routerLink="/edit/{{ship$?.uid}}">Редактировать</button>
   </li>
 </ul>
 

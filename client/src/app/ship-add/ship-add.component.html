@@ -13,28 +13,28 @@
         <input matInput placeholder="Название корабля" formControlName="sh_title"
                [errorStateMatcher]="matcher">
         <mat-error>
-          <span *ngIf="shipForm.controls['sh_title'].valid &&shipForm.controls['sh_title'].touched" >Please enter Product Name</span>
+          <span *ngIf="!shipForm.controls['sh_title'].valid &&shipForm.controls['sh_title'].touched" >Укажите название корабля</span>
         </mat-error>
       </mat-form-field>
       <mat-form-field class="example-full-width">
         <input matInput placeholder="Капитан" formControlName="skipper"
                [errorStateMatcher]="matcher">
         <mat-error>
-          <span *ngIf="shipForm.controls['skipper'].valid &&shipForm.controls['skipper'].touched">Please enter Product Description</span>
+          <span *ngIf="!shipForm.controls['skipper'].valid &&shipForm.controls['skipper'].touched">Укажите капитана корабля</span>
         </mat-error>
       </mat-form-field>
       <mat-form-field class="example-full-width">
         <input matInput placeholder="Год постройки" formControlName="year"
                [errorStateMatcher]="matcher">
         <mat-error>
-          <span *ngIf="shipForm.controls['year'].valid &&shipForm.controls['year'].touched">Please enter Product Price</span>
+          <span *ngIf="!shipForm.controls['year'].valid &&shipForm.controls['year'].touched">Укажите год</span>
         </mat-error>
       </mat-form-field>
       <mat-form-field class="example-full-width">
         <input matInput placeholder="Водоизмещение" formControlName="capacity"
                [errorStateMatcher]="matcher">
         <mat-error>
-          <span *ngIf="shipForm.controls['capacity'].valid &&shipForm.controls['capacity'].touched">Please enter Product Price</span>
+          <span *ngIf="!shipForm.controls['capacity'].valid &&shipForm.controls['capacity'].touched">Укажите водоизмещение корабля</span>
         </mat-error>
       </mat-form-field>
       <mat-form-field class="example-full-width">
@@ -43,7 +43,7 @@
           <mat-option value="1">Грузовой</mat-option>
         </mat-select>
         <mat-error>
-          <span *ngIf="shipForm.controls['type_id'].valid &&shipForm.controls['type_id'].touched">Please enter Product Price</span>
+          <span *ngIf="!shipForm.controls['type_id'].valid &&shipForm.controls['type_id'].touched">Укажите тип корабля</span>
         </mat-error>
       </mat-form-field>
       <div class="button-row">
