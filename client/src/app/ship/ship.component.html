@@ -1,0 +1,23 @@
+
+<mat-toolbar color="gray">
+
+  <span>Корабль</span>
+
+</mat-toolbar>
+
+<ul>
+  <li>
+    Название: {{ship$?.sh_title}}
+
+    <ul>
+      <li>Капитан: {{ship$?.skipper}}</li>
+      <li>Год строительства: {{ship$?.year}}</li>
+      <li>Тип корабля: {{ship$?.type_id}}</li>
+    </ul>
+
+    <button mat-raised-button (click)="delete(ship$)">Удалить</button>
+    <button mat-raised-button (click)="back()">Назад</button>
+    <button mat-raised-button routerLink="/edit">Редактировать</button>
+  </li>
+</ul>
+

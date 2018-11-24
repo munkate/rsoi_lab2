@@ -1,0 +1,55 @@
+<div class="example-container mat-elevation-z8">
+  <div class="example-loading-shade"
+       *ngIf="isLoadingResults">
+    <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+  </div>
+  <div class="button-row">
+    <a mat-flat-button  [routerLink]="['/ships']"><mat-icon>list</mat-icon></a>
+  </div>
+  <mat-card class="example-card">
+    <form [formGroup]="shipForm" (ngSubmit)="onFormSubmit(shipForm.value)" novalidate>
+
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="Название корабля" formControlName="sh_title"
+               [errorStateMatcher]="matcher">
+        <mat-error>
+          <span *ngIf="shipForm.controls['sh_title'].valid &&shipForm.controls['sh_title'].touched" >Please enter Product Name</span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="Капитан" formControlName="skipper"
+               [errorStateMatcher]="matcher">
+        <mat-error>
+          <span *ngIf="shipForm.controls['skipper'].valid &&shipForm.controls['skipper'].touched">Please enter Product Description</span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="Год постройки" formControlName="year"
+               [errorStateMatcher]="matcher">
+        <mat-error>
+          <span *ngIf="shipForm.controls['year'].valid &&shipForm.controls['year'].touched">Please enter Product Price</span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="Водоизмещение" formControlName="capacity"
+               [errorStateMatcher]="matcher">
+        <mat-error>
+          <span *ngIf="shipForm.controls['capacity'].valid &&shipForm.controls['capacity'].touched">Please enter Product Price</span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-select formControlName="type_id">
+          <mat-option value="0">Танкер</mat-option>
+          <mat-option value="1">Грузовой</mat-option>
+        </mat-select>
+        <mat-error>
+          <span *ngIf="shipForm.controls['type_id'].valid &&shipForm.controls['type_id'].touched">Please enter Product Price</span>
+        </mat-error>
+      </mat-form-field>
+      <div class="button-row">
+        <button type="submit" [disabled]="!shipForm.valid" mat-flat-button color="primary"><mat-icon>save</mat-icon></button>
+      </div>
+    </form>
+  </mat-card>
+</div>
+

@@ -1,0 +1,15 @@
+<mat-toolbar color="gray">
+
+  <span><h1>Корабли</h1></span>
+
+</mat-toolbar>
+<a mat-raised-button routerLink="/add" class="btn btn-default">Создать новый</a>
+<p>
+<ul>
+  <li *ngFor="let ship of ships$.content">
+    <a routerLink="/ships/{{ship?.uid}}">{{ship?.sh_title}}</a>
+    <ul>
+      <li>{{ship?.skipper}}</li>
+    </ul>
+  </li>
+</ul>

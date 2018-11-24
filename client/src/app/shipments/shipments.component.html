@@ -1,0 +1,11 @@
+<h1>Shipments</h1>
+<ul>
+  <li *ngFor="let shipment of shipments$.content">
+    <a routerLink="/shipments/{{shipment?.uid}}">{{shipment?.title}}</a>
+
+    <ul>
+      <li>{{shipment?.declare_value}}</li>
+      <li>{{shipment?.unit_id}}</li>
+    </ul>
+  </li>
+</ul>
