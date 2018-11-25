@@ -26,7 +26,7 @@
       <li>Единицы измерения: {{shipment.unit_id}}</li>
     </ul>
     <br>
-    <button mat-raised-button (click)="delete(delivery$)">Удалить</button>
+    <button mat-raised-button (click)="delete()">Удалить</button>
     <button mat-raised-button (click)="back()">Назад</button>
     <button mat-raised-button routerLink="/edit/{{ship$?.uid}}">Редактировать</button>
   </li>

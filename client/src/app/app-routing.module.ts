@@ -15,7 +15,7 @@ const routes: Routes = [
     component: ShipAddComponent,
   },
   {
-    path: 'users/1/deliveries/:id',
+    path: 'users/:user_id/deliveries/:id',
     component: DeliveryComponent,
   },
   {
