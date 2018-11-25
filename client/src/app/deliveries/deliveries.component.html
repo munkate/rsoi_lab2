@@ -1,3 +1,18 @@
+<mat-toolbar color="gray">
+
+  <span><h1>Доставки</h1></span>
+
+</mat-toolbar>
+<a mat-raised-button routerLink="/add" class="btn btn-default">Создать новый</a>
 <p>
-  deliveries works!
-</p>
+<div *ngFor="let delivery of deliveries$.deliveries.content">
+<ul >
+  <li >
+    <a routerLink="/users/{{delivery?.user_id}}/deliveries/{{delivery?.uid}}">Доставка №{{delivery?.uid}}</a>
+    <ul>
+      <li>Дата отправления:{{delivery?.departure_date}}</li>
+      <li>Дата прибытия:{{delivery?.arrive_date}}</li>
+    </ul>
+  </li>
+</ul>
+</div>

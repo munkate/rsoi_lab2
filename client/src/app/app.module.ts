@@ -26,6 +26,7 @@ import { ShipAddComponent } from './ship-add/ship-add.component';
 import { ShipEditComponent } from './ship-edit/ship-edit.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {ReactiveFormsModule} from '@angular/forms';
+import { DeliveryComponent } from './delivery/delivery.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import {ReactiveFormsModule} from '@angular/forms';
     ShipComponent,
     HomeComponent,
     ShipAddComponent,
-    ShipEditComponent  ],
+    ShipEditComponent,
+    DeliveryComponent  ],
   imports: [
     BrowserModule,
     AppRoutingModule,

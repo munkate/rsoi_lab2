@@ -1,0 +1,33 @@
+<mat-toolbar color="gray">
+
+  <span>Доставка №{{delivery$.delivery.uid}}</span>
+
+</mat-toolbar>
+
+<ul>
+  <li>
+    <ul>
+      <li>Дата отправки: {{delivery$.delivery.departure_date}}</li>
+      <li>Дата прибытия: {{delivery$['delivery'].arrive_date}}</li>
+      <li>Пункт отправки: {{delivery$.delivery.origin}}</li>
+      <li>Пункт назначения: {{delivery$.delivery.destination}}</li>
+    </ul>
+    <ul> <h3>Данные корабля:</h3></ul>
+    <ul>
+      <li> Название: {{delivery$.ship.sh_title}}</li>
+      <li>Капитан: {{delivery$['ship']?.skipper}}</li>
+      <li>Год строительства: {{delivery$['ship']?.year}}</li>
+      <li>Тип корабля: {{delivery$['ship']?.type_id}}</li>
+    </ul>
+    <ul><h3>Грузы:</h3></ul>
+    <ul *ngFor="let shipment of delivery$.shipments">
+      <li> Название: {{shipment.title}}</li>
+      <li>Количество: {{shipment.declare_value}}</li>
+      <li>Единицы измерения: {{shipment.unit_id}}</li>
+    </ul>
+    <br>
+    <button mat-raised-button (click)="delete(delivery$)">Удалить</button>
+    <button mat-raised-button (click)="back()">Назад</button>
+    <button mat-raised-button routerLink="/edit/{{ship$?.uid}}">Редактировать</button>
+  </li>
+</ul>
