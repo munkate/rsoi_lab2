@@ -17,6 +17,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,8 +30,10 @@ public class DeliveryServiceImpl implements DeliveryService {
     @Override
     public long createDelivery(DeliveryModel delivery) {
         try{
+            long range = 1234567L;
+            Random r = new Random();
         Delivery new_delivery = new Delivery(delivery.getDeparture_date(), delivery.getArrive_date(),
-                delivery.getOrigin(), delivery.getDestination(), delivery.getShip_id(), delivery.getUser_id(), delivery.getUid());
+                delivery.getOrigin(), delivery.getDestination(), delivery.getShip_id(), delivery.getUser_id(), (long)(r.nextDouble()*range));
 
         deliveryRepository.save(new_delivery);
         LOGGER.info("Delivery created.");
@@ -47,9 +50,8 @@ public class DeliveryServiceImpl implements DeliveryService {
        DateFormat format = new SimpleDateFormat("yyyy-mm-dd");
         del.setOrigin((String)model.get("origin"));
         del.setDestination((String)model.get("destination"));
-        del.setUid((Integer)model.get("uid"));
-        del.setUser_id((Integer)model.get("user_id"));
-        del.setShip_id((Integer)model.get("ship_id"));
+        del.setUser_id(Integer.parseInt(model.get("user_id").toString()));
+        del.setShip_id(Integer.parseInt(model.get("ship_id").toString()));
         del.setDeparture_date(format.parse((String)model.get("departure_date")));
         del.setArrive_date(format.parse((String)model.get("arrive_date")));
         LOGGER.info("Successful getting model from hashmap");

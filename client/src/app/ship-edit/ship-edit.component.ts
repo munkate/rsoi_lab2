@@ -39,6 +39,10 @@ export class ShipEditComponent implements OnInit {
     this.getShipData();
   }
 
+  onFormLoad() {
+    this.getShipData();
+  }
+
   getShipData() {
     this.service.getShip(this.route.snapshot.params['id']).subscribe(
       data => this.ship$ = data);
@@ -58,7 +62,6 @@ export class ShipEditComponent implements OnInit {
     });
 
   }
-
   onFormSubmit(form: NgForm) {
     this.isLoadingResults = true;
     this.service.updateShip(form)

@@ -41,8 +41,11 @@ export class DataService {
   getDeliveries(user_id) {
     return this.http.get(`${this.apiURL}/users/${user_id}/deliveries?page=0&size=20`);
   }
-  deleteDelivery(user_id,id) {
+  deleteDelivery(user_id, id) {
     return this.http.delete(`${this.apiURL}/delete/users/${user_id}/deliveries/${id}`);
+  }
+  createDelivery(user_id, delivery) {
+    return this.http.post(`${this.apiURL}/users/1/delivery`, delivery);
   }
 
 }

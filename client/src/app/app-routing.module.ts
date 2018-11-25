@@ -8,11 +8,16 @@ import {HomeComponent} from './home/home.component';
 import {ShipAddComponent} from './ship-add/ship-add.component';
 import {ShipEditComponent} from './ship-edit/ship-edit.component';
 import {DeliveryComponent} from './delivery/delivery.component';
+import {DeliveryAddComponent} from './delivery-add/delivery-add.component';
 
 const routes: Routes = [
   {
     path: 'add',
     component: ShipAddComponent,
+  },
+  {
+    path: 'users/:user_id/delivery',
+    component: DeliveryAddComponent,
   },
   {
     path: 'users/:user_id/deliveries/:id',
