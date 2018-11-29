@@ -30,10 +30,8 @@ public class DeliveryServiceImpl implements DeliveryService {
     @Override
     public long createDelivery(DeliveryModel delivery) {
         try{
-            long range = 1234567L;
-            Random r = new Random();
         Delivery new_delivery = new Delivery(delivery.getDeparture_date(), delivery.getArrive_date(),
-                delivery.getOrigin(), delivery.getDestination(), delivery.getShip_id(), delivery.getUser_id(), (long)(r.nextDouble()*range));
+                delivery.getOrigin(), delivery.getDestination(), delivery.getShip_id(), delivery.getUser_id(), delivery.getUid());
 
         deliveryRepository.save(new_delivery);
         LOGGER.info("Delivery created.");
@@ -48,6 +46,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     public DeliveryModel getModelFromHashMap(LinkedHashMap<String,Object> model) throws ParseException {
      try {   DeliveryModel del = new DeliveryModel();
        DateFormat format = new SimpleDateFormat("yyyy-mm-dd");
+        del.setUid(Integer.parseInt(model.get("uid").toString()));
         del.setOrigin((String)model.get("origin"));
         del.setDestination((String)model.get("destination"));
         del.setUser_id(Integer.parseInt(model.get("user_id").toString()));

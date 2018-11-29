@@ -1,0 +1,54 @@
+<!--<div class="example-container mat-elevation-z8">
+  <div class="example-loading-shade"
+       *ngIf="isLoadingResults">
+    <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+  </div>-->
+ <!-- <div class="button-row">
+    <a mat-flat-button  [routerLink]="['/deliveries']"><mat-icon>list</mat-icon></a>
+  </div>-->
+  <mat-card class="example-card">
+    <form [formGroup]="shipmentForm" (ngSubmit)="onFormSubmit(shipmentForm.value)" novalidate>
+      <mat-form-field class="example-full-width">
+        <input hidden matInput formControlName="uid" value="{{uid}}">
+        <mat-error>
+          <span *ngIf="!shipmentForm.controls['uid'].valid &&shipmentForm.controls['uid'].touched" >Укажите название груза</span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <input  matInput formControlName="del_id" value="{{del_id}}">
+        <mat-error>
+          <span *ngIf="!shipmentForm.controls['title'].valid &&shipmentForm.controls['title'].touched" >Укажите название груза</span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="Название груза" formControlName="title"
+               [errorStateMatcher]="matcher">
+        <mat-error>
+          <span *ngIf="!shipmentForm.controls['title'].valid &&shipmentForm.controls['title'].touched" >Укажите название груза</span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="Количество" formControlName="declare_value"
+               [errorStateMatcher]="matcher">
+        <mat-error>
+          <span *ngIf="!shipmentForm.controls['declare_value'].valid &&shipmentForm.controls['declare_value'].touched">Укажите количество</span>
+        </mat-error>
+      </mat-form-field>
+       <!-- <mat-select placeholder="Единицы измерений" formControlName="unit_id">
+          <mat-option aria-selected="true" value="0">Тонна</mat-option>
+          <mat-option value="1">Килограмм</mat-option>
+          <mat-option value="2">Центнер</mat-option>
+        </mat-select>-->
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="Количество" formControlName="unit_id"
+               [errorStateMatcher]="matcher">
+        <mat-error>
+          <span *ngIf="!shipmentForm.controls['declare_value'].valid &&shipmentForm.controls['declare_value'].touched">Укажите количество</span>
+        </mat-error>
+      </mat-form-field>
+             <div class="button-row">
+        <button type="submit" [disabled]="!shipmentForm.valid" mat-flat-button color="primary"><mat-icon>save</mat-icon></button>
+      </div>
+    </form>
+  </mat-card>
+<!--</div>-->

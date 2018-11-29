@@ -17,6 +17,7 @@ import ru.rsoi.shipments.repository.ShipmentRepository;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,7 +44,6 @@ public class ShipmentServiceImpl implements ShipmentService {
     @Transactional
     public void createShipments(JSONArray shipments) {
         List<Shipment> new_shipments = new ArrayList<Shipment>();
-
         LinkedHashMap<String,Object> buf = new LinkedHashMap<String,Object>();
         try{
             for (int i=0; i<shipments.toArray().length;i++){
@@ -51,10 +51,10 @@ public class ShipmentServiceImpl implements ShipmentService {
                buf = (LinkedHashMap<String,Object>)shipments.get(i);
                // for (int j=0; j<buf.values().toArray().length;j++) {
                     shipment.setTitle((String)buf.get("title"));
-                    shipment.setDeclare_value((Integer) buf.get("declare_value"));
-                    shipment.setUnit_id(Unit.valueOf((String) buf.get("unit_id")) );
-                    shipment.setUid((Integer) buf.get("uid"));
-                    shipment.setDel_id((Integer) buf.get("del_id"));
+                    shipment.setDeclare_value(Integer.parseInt(buf.get("declare_value").toString()));
+                    shipment.setUnit_id(Unit.valueOf(Integer.parseInt(buf.get("unit_id").toString())) );
+                    shipment.setUid(Long.parseLong(buf.get("uid").toString()));
+                    shipment.setDel_id(Integer.parseInt(buf.get("del_id").toString()));
                 new_shipments.add(shipment);
             }
            // for (Shipment _entity: new_shipments) {
@@ -65,7 +65,7 @@ public class ShipmentServiceImpl implements ShipmentService {
             LOGGER.info("Shipment created.");
         }
         catch (RuntimeException e){
-            LOGGER.error("Failed to create shipment");
+            LOGGER.error("Failed to create shipments");
         }
     }
     @Override

@@ -47,5 +47,9 @@ export class DataService {
   createDelivery(user_id, delivery) {
     return this.http.post(`${this.apiURL}/users/1/delivery`, delivery);
   }
+  createShipment(shipment)
+  {
+    return this.http.post(`${this.apiURL}/shipments//createAgr`, shipment);
+  }
 
 }

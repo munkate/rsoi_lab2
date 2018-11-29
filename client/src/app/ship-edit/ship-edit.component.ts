@@ -39,9 +39,6 @@ export class ShipEditComponent implements OnInit {
     this.getShipData();
   }
 
-  onFormLoad() {
-    this.getShipData();
-  }
 
   getShipData() {
     this.service.getShip(this.route.snapshot.params['id']).subscribe(
