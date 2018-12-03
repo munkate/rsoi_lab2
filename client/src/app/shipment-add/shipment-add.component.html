@@ -34,18 +34,14 @@
           <span *ngIf="!shipmentForm.controls['declare_value'].valid &&shipmentForm.controls['declare_value'].touched">Укажите количество</span>
         </mat-error>
       </mat-form-field>
-       <!-- <mat-select placeholder="Единицы измерений" formControlName="unit_id">
+      <mat-form-field class="example-full-width">
+        <mat-select placeholder="Единицы измерений" formControlName="unit_id">
           <mat-option aria-selected="true" value="0">Тонна</mat-option>
           <mat-option value="1">Килограмм</mat-option>
           <mat-option value="2">Центнер</mat-option>
-        </mat-select>-->
-      <mat-form-field class="example-full-width">
-        <input matInput placeholder="Количество" formControlName="unit_id"
-               [errorStateMatcher]="matcher">
-        <mat-error>
-          <span *ngIf="!shipmentForm.controls['declare_value'].valid &&shipmentForm.controls['declare_value'].touched">Укажите количество</span>
-        </mat-error>
+        </mat-select>
       </mat-form-field>
+
              <div class="button-row">
         <button type="submit" [disabled]="!shipmentForm.valid" mat-flat-button color="primary"><mat-icon>save</mat-icon></button>
       </div>

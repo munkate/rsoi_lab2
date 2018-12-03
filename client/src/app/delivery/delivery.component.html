@@ -24,6 +24,9 @@
       <li> Название: {{shipment.title}}</li>
       <li>Количество: {{shipment.declare_value}}</li>
       <li>Единицы измерения: {{shipment.unit_id}}</li>
+      <li><button mat-raised-button>Удалить</button>
+        <button mat-raised-button routerLink="/shipments/{{shipment?.uid}}/edit">Редактировать</button></li>
+
     </ul>
     <br>
     <button mat-raised-button (click)="delete()">Удалить</button>

@@ -58,8 +58,5 @@ export class DeliveryAddComponent implements OnInit {
         this.isLoadingResults = false;
       });
   }
-  receiveFromChild(data: JSON) {
-    this.child_response = data;
-  }
 
 }

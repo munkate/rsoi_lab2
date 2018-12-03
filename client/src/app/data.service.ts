@@ -35,6 +35,12 @@ export class DataService {
   getShipments() {
     return this.http.get(this.apiURL + 'shipments');
   }
+  getShipment(id) {
+    return this.http.get(`${this.apiURL}/shipments/${id}`);
+  }
+  updateShipment(shipment) {
+    return this.http.post(`${this.apiURL}/shipments/edit`, shipment);
+  }
   getDelivery(id) {
     return this.http.get(`${this.apiURL}/users/1/deliveries/${id}`);
   }

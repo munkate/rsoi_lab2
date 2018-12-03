@@ -1,3 +1,52 @@
-<p>
-  shipment-edit works!
-</p>
+<div class="example-container mat-elevation-z8">
+  <div class="example-loading-shade"
+       *ngIf="isLoadingResults">
+    <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+  </div>
+  <div class="button-row">
+    <a mat-flat-button  (click)="back()"><mat-icon>info</mat-icon></a>
+    <a mat-flat-button  (click)="getShipData()"><mat-icon>info</mat-icon></a>
+  </div>
+<mat-card class="example-card">
+  <a mat-flat-button  (click)="onLoad()"><mat-icon>info</mat-icon></a>
+  <form [formGroup]="shipmentForm" (ngLoad)="onLoad()" (ngSubmit)="onFormSubmit(shipmentForm.value)" novalidate>
+    <mat-form-field hidden class="example-full-width">
+      <input hidden matInput formControlName="uid" value="{{uid}}">
+      <input hidden matInput formControlName="del_id" value="{{del_id}}">
+      <mat-error>
+        <span *ngIf="!shipmentForm.controls['uid'].valid &&shipmentForm.controls['uid'].touched" >Укажите название груза</span>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+      <input  matInput formControlName="del_id" value="{{del_id}}">
+      <mat-error>
+        <span *ngIf="!shipmentForm.controls['del_id'].valid &&shipmentForm.controls['del_id'].touched" >Укажите название груза</span>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+      <input matInput placeholder="Название груза" formControlName="title"
+             [errorStateMatcher]="matcher">
+      <mat-error>
+        <span *ngIf="!shipmentForm.controls['title'].valid &&shipmentForm.controls['title'].touched" >Укажите название груза</span>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+      <input matInput placeholder="Количество" formControlName="declare_value"
+             [errorStateMatcher]="matcher">
+      <mat-error>
+        <span *ngIf="!shipmentForm.controls['declare_value'].valid &&shipmentForm.controls['declare_value'].touched">Укажите количество</span>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+      <mat-select placeholder="Единицы измерений" formControlName="unit_id">
+        <mat-option aria-selected="true" value="0">Тонна</mat-option>
+        <mat-option value="1">Килограмм</mat-option>
+        <mat-option value="2">Центнер</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div class="button-row">
+      <button type="submit" [disabled]="!shipmentForm.valid" mat-flat-button color="primary"><mat-icon>save</mat-icon></button>
+    </div>
+  </form>
+</mat-card>
+</div>

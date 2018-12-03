@@ -9,6 +9,7 @@ import {ShipAddComponent} from './ship-add/ship-add.component';
 import {ShipEditComponent} from './ship-edit/ship-edit.component';
 import {DeliveryComponent} from './delivery/delivery.component';
 import {DeliveryAddComponent} from './delivery-add/delivery-add.component';
+import {ShipmentEditComponent} from './shipment-edit/shipment-edit.component';
 
 const routes: Routes = [
   {
@@ -38,19 +39,23 @@ const routes: Routes = [
 
   {
     path: 'ships',
-    component: ShipsComponent
+    component: ShipsComponent,
   },
   {
     path: 'deliveries',
-    component: DeliveriesComponent
+    component: DeliveriesComponent,
+  },
+  {
+    path: 'shipments/:id/edit',
+    component: ShipmentEditComponent,
   },
   {
     path: 'shipments',
-    component: ShipmentsComponent
+    component: ShipmentsComponent,
   },
   {
     path: '',
-    component: HomeComponent
+    component: HomeComponent,
   },
   {
     path: '**',
