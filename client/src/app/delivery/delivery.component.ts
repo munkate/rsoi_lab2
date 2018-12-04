@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {DataService} from '../data.service';
 import {ActivatedRoute, Router} from '@angular/router';
+import {MatDialog} from '@angular/material';
+import {DialogComponent} from '../dialog/dialog.component';
 
 @Component({
   selector: 'app-delivery',
@@ -12,8 +14,10 @@ export class DeliveryComponent implements OnInit {
   delivery$: Object;
   id: number;
   user_id: number;
+  dialogResult: string;
+  response: string = String('Confirm');
 
-  constructor(private service: DataService, private route: ActivatedRoute, private router: Router) {
+  constructor(private service: DataService, private route: ActivatedRoute, private router: Router, public dialog: MatDialog) {
     this.id = this.route.snapshot.params['id'];
     this.user_id = this.route.snapshot.params['user_id'];
   }
@@ -22,12 +26,18 @@ export class DeliveryComponent implements OnInit {
       service => this.delivery$ = service);
   }
   delete() {
-    this.service.deleteDelivery(this.user_id, this.id).subscribe(res => {
-        this.router.navigate([`users/${this.user_id}/deliveries`]);
-      }, (err) => {
-        console.log(err);
-      }
-    );
-  }
+    const dialogRef = this.dialog.open(DialogComponent, {
+      data: 'Вы действительно хотите удалить доставку?'
+    });
 
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog closed: ${result}`);
+      if (this.response === result) {
+        this.service.deleteDelivery(this.user_id, this.id).subscribe(res => {
+          this.router.navigate([`users/${this.user_id}/deliveries`]);
+        }, (err) => {
+          console.log(err);
+        });
+      }
+    });
 }

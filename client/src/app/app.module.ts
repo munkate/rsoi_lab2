@@ -10,8 +10,7 @@ import {
   MatFormFieldModule,
   MatProgressSpinnerModule,
   MatIconModule,
-  MatNativeDateModule, MatOptionModule, MatSelectModule, MatToolbarModule, MatNavList, MatListModule
-} from '@angular/material';
+  MatNativeDateModule, MatSelectModule, MatToolbarModule, MatListModule} from '@angular/material';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
@@ -30,6 +29,8 @@ import { DeliveryComponent } from './delivery/delivery.component';
 import { DeliveryAddComponent } from './delivery-add/delivery-add.component';
 import { ShipmentAddComponent } from './shipment-add/shipment-add.component';
 import { ShipmentEditComponent } from './shipment-edit/shipment-edit.component';
+import { DialogComponent } from './dialog/dialog.component';
+import { DeliveryEditComponent } from './delivery-edit/delivery-edit.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,9 @@ import { ShipmentEditComponent } from './shipment-edit/shipment-edit.component';
     DeliveryComponent,
     DeliveryAddComponent,
     ShipmentAddComponent,
-    ShipmentEditComponent  ],
+    ShipmentEditComponent,
+    DialogComponent,
+    DeliveryEditComponent  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -66,7 +69,10 @@ import { ShipmentEditComponent } from './shipment-edit/shipment-edit.component';
     MatListModule,
     MatSidenavModule,
     BrowserAnimationsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+  ],
+  entryComponents: [
+    DialogComponent
   ],
   providers: [],
   bootstrap: [AppComponent]
