@@ -1,11 +1,9 @@
-<!--<div class="example-container mat-elevation-z8">
+<div class="example-container mat-elevation-z8">
   <div class="example-loading-shade"
        *ngIf="isLoadingResults">
     <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
-  </div>-->
- <!-- <div class="button-row">
-    <a mat-flat-button  [routerLink]="['/deliveries']"><mat-icon>list</mat-icon></a>
-  </div>-->
+  </div>
+
   <mat-card class="example-card">
     <form [formGroup]="shipmentForm" (ngSubmit)="onFormSubmit(shipmentForm.value)" novalidate>
       <mat-form-field class="example-full-width">
@@ -41,10 +39,7 @@
           <mat-option value="2">Центнер</mat-option>
         </mat-select>
       </mat-form-field>
-
-             <div class="button-row">
-        <button type="submit" [disabled]="!shipmentForm.valid" mat-flat-button color="primary"><mat-icon>save</mat-icon></button>
-      </div>
+        <button type="submit" align="right" [disabled]="!shipmentForm.valid" mat-raised-button color="primary">+Добавить</button>
     </form>
   </mat-card>
-<!--</div>-->
+</div>

@@ -21,10 +21,12 @@ export class DeliveryComponent implements OnInit {
     this.id = this.route.snapshot.params['id'];
     this.user_id = this.route.snapshot.params['user_id'];
   }
+
   ngOnInit() {
     this.service.getDelivery(this.id).subscribe(
       service => this.delivery$ = service);
   }
+
   delete() {
     const dialogRef = this.dialog.open(DialogComponent, {
       data: 'Вы действительно хотите удалить доставку?'
@@ -40,4 +42,5 @@ export class DeliveryComponent implements OnInit {
         });
       }
     });
+  }
 }

@@ -4,9 +4,6 @@ import {ActivatedRoute, Router} from '@angular/router';
 
 import {MatDialog} from '@angular/material';
 import {DialogComponent} from '../dialog/dialog.component';
-import {Observable} from 'rxjs';
-import {Ship} from './ship';
-import {DialogComponent} from '../dialog/dialog.component';
 
 @Component({
   selector: 'app-ship',

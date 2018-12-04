@@ -72,7 +72,8 @@ import { DeliveryEditComponent } from './delivery-edit/delivery-edit.component';
     ReactiveFormsModule,
   ],
   entryComponents: [
-    DialogComponent
+    DialogComponent,
+    ShipmentAddComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

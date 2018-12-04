@@ -46,7 +46,13 @@ export class DeliveryAddComponent implements OnInit {
   }
   onFormSubmit(form: NgForm) {
     let data;
-    data = JSON.stringify( {delivery: form, shipments: [JSON.parse(sessionStorage.getItem('shipments'))]});
+    const shipments = [];
+    let i = 0;
+    while (sessionStorage.getItem(i.toString()) !== null) {
+      shipments.push(JSON.parse(sessionStorage.getItem(i.toString())));
+      i = i + 1;
+    }
+    data = JSON.stringify( {delivery: form, shipments: shipments});
     console.log(data);
     this.isLoadingResults = true;
     this.service.createDelivery(this.user_id, JSON.parse(data))
