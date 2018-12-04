@@ -10,6 +10,7 @@ import {ShipEditComponent} from './ship-edit/ship-edit.component';
 import {DeliveryComponent} from './delivery/delivery.component';
 import {DeliveryAddComponent} from './delivery-add/delivery-add.component';
 import {ShipmentEditComponent} from './shipment-edit/shipment-edit.component';
+import {DeliveryEditComponent} from './delivery-edit/delivery-edit.component';
 
 const routes: Routes = [
   {
@@ -19,6 +20,10 @@ const routes: Routes = [
   {
     path: 'users/:user_id/delivery',
     component: DeliveryAddComponent,
+  },
+  {
+    path: 'users/:user_id/deliveries/:id/edit',
+    component: DeliveryEditComponent,
   },
   {
     path: 'users/:user_id/deliveries/:id',

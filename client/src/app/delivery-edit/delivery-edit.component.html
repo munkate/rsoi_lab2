@@ -1,3 +1,60 @@
-<p>
-  delivery-edit works!
-</p>
+<div class="example-container mat-elevation-z8">
+  <div class="example-loading-shade"
+       *ngIf="isLoadingResults">
+    <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+  </div>
+  <div class="button-row">
+    <a mat-flat-button  [routerLink]="['/users/1/deliveries']"><mat-icon>list</mat-icon></a>
+    <a mat-flat-button  (click)="getDeliveryData()"><mat-icon>list</mat-icon></a>
+  </div>
+  <mat-card class="example-card">
+    <form [formGroup]="deliveryForm" (ngSubmit)="onFormSubmit(deliveryForm.value)" novalidate>
+      <mat-form-field  hidden class="example-full-width">
+        <input hidden matInput  formControlName="uid" value="{{id}}">
+
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <input type="date" matInput placeholder="Дата отправки" formControlName="departure_date"
+               [errorStateMatcher]="matcher">
+        <mat-error>
+          <span *ngIf="!deliveryForm.controls['departure_date'].valid &&deliveryForm.controls['departure_date'].touched" >Укажите дату отправки</span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <input  type="date"matInput placeholder="Дата прибытия" formControlName="arrive_date"
+                [errorStateMatcher]="matcher">
+        <mat-error>
+          <span *ngIf="!deliveryForm.controls['arrive_date'].valid &&deliveryForm.controls['arrive_date'].touched">Укажите дату прибытия</span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="Пункт отправления" formControlName="origin"
+               [errorStateMatcher]="matcher">
+        <mat-error>
+          <span *ngIf="!deliveryForm.controls['origin'].valid &&deliveryForm.controls['origin'].touched">Укажите пункт отправления</span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="Пункт назначения" formControlName="destination"
+               [errorStateMatcher]="matcher">
+        <mat-error>
+          <span *ngIf="!deliveryForm.controls['destination'].valid &&deliveryForm.controls['destination'].touched">Укажите пункт назначения</span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-select formControlName="ship_id" placeholder="Корабль">
+          <mat-option *ngFor="let ship of ships$.content" value="{{ship.uid}}">{{ship.sh_title}}</mat-option>
+        </mat-select>
+        <mat-error>
+          <span *ngIf="!deliveryForm.controls['ship_id'].valid &&deliveryForm.controls['ship_id'].touched">Укажите корабль</span>
+        </mat-error>
+      </mat-form-field>
+      <mat-select  formControlName="user_id">
+        <mat-option aria-selected="true" value="1">1</mat-option>
+      </mat-select>
+      <div class="button-row">
+        <button type="submit" [disabled]="!deliveryForm.valid" mat-flat-button color="primary"><mat-icon>save</mat-icon></button>
+      </div>
+    </form>
+  </mat-card>
+</div>

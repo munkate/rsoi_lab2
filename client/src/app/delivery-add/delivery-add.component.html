@@ -13,35 +13,35 @@
 
       </mat-form-field>
       <mat-form-field class="example-full-width">
-        <input type="date" matInput placeholder="Название корабля" formControlName="departure_date"
+        <input type="date" matInput placeholder="Дата отправки" formControlName="departure_date"
                [errorStateMatcher]="matcher">
         <mat-error>
           <span *ngIf="!deliveryForm.controls['departure_date'].valid &&deliveryForm.controls['departure_date'].touched" >Укажите дату отправки</span>
         </mat-error>
       </mat-form-field>
       <mat-form-field class="example-full-width">
-        <input  type="date"matInput placeholder="Капитан" formControlName="arrive_date"
+        <input  type="date"matInput placeholder="Дата прибытия" formControlName="arrive_date"
                [errorStateMatcher]="matcher">
         <mat-error>
           <span *ngIf="!deliveryForm.controls['arrive_date'].valid &&deliveryForm.controls['arrive_date'].touched">Укажите дату прибытия</span>
         </mat-error>
       </mat-form-field>
       <mat-form-field class="example-full-width">
-        <input matInput placeholder="Год постройки" formControlName="origin"
+        <input matInput placeholder="Пункт отправления" formControlName="origin"
                [errorStateMatcher]="matcher">
         <mat-error>
           <span *ngIf="!deliveryForm.controls['origin'].valid &&deliveryForm.controls['origin'].touched">Укажите пункт отправления</span>
         </mat-error>
       </mat-form-field>
       <mat-form-field class="example-full-width">
-        <input matInput placeholder="Водоизмещение" formControlName="destination"
+        <input matInput placeholder="Пункт назначения" formControlName="destination"
                [errorStateMatcher]="matcher">
         <mat-error>
           <span *ngIf="!deliveryForm.controls['destination'].valid &&deliveryForm.controls['destination'].touched">Укажите пункт назначения</span>
         </mat-error>
       </mat-form-field>
       <mat-form-field class="example-full-width">
-        <mat-select formControlName="ship_id">
+        <mat-select formControlName="ship_id" placeholder="Корабль">
           <mat-option *ngFor="let ship of ships$.content" value="{{ship.uid}}">{{ship.sh_title}}</mat-option>
         </mat-select>
         <mat-error>
