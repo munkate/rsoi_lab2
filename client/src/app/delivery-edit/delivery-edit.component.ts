@@ -18,7 +18,7 @@ export class DeliveryEditComponent implements AfterViewInit, AfterViewChecked {
   destination: '';
   user_id: number;
   uid: number;
-  ship_id: number;
+  ship_id: string;
   isLoadingResults = false;
   firstCheck = true;
 
@@ -56,7 +56,7 @@ export class DeliveryEditComponent implements AfterViewInit, AfterViewChecked {
       arrive_date : this.delivery$['arrive_date'],
       origin: this.delivery$['origin'],
       destination: this.delivery$['destination'],
-      ship_id: this.delivery$['ship_id'],
+      ship_id: this.delivery$['ship_id'].toString(),
       user_id: this.delivery$['user_id'],
       uid: this.delivery$['uid']
     });

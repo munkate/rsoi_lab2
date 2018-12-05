@@ -10,8 +10,8 @@
   <li >
     <a routerLink="/users/{{delivery?.user_id}}/deliveries/{{delivery?.uid}}">Доставка №{{delivery?.uid}}</a>
     <ul>
-      <li>Дата отправления:{{delivery?.departure_date}}</li>
-      <li>Дата прибытия:{{delivery?.arrive_date}}</li>
+      <li>Из {{delivery?.origin}} в {{delivery?.destination}}</li>
+     <!-- <li>Дата прибытия:{{delivery?.arrive_date}}</li>-->
     </ul>
   </li>
 </ul>

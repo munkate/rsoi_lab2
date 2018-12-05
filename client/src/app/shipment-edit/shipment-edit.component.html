@@ -30,8 +30,8 @@
       </mat-error>
     </mat-form-field>
     <mat-form-field class="example-full-width">
-      <mat-select placeholder="Единицы измерений" formControlName="unit_id">
-        <mat-option aria-selected="true" value="0">Тонна</mat-option>
+      <mat-select placeholder="Единицы измерений" formControlName="unit_id" [value]="unit_id">
+        <mat-option  value="0">Тонна</mat-option>
         <mat-option value="1">Килограмм</mat-option>
         <mat-option value="2">Центнер</mat-option>
       </mat-select>

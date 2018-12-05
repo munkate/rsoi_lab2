@@ -24,7 +24,7 @@ export class ShipmentEditComponent implements AfterViewInit, AfterViewChecked {
   shipmentForm: FormGroup;
   title = '';
   declare_value: number;
-  unit_id: number;
+  unit_id: string;
  del_id: number;
   uid: number;
   isLoadingResults = false;
@@ -56,10 +56,15 @@ export class ShipmentEditComponent implements AfterViewInit, AfterViewChecked {
   onLoad() {
     this.uid = this.shipment$['uid'];
     this.del_id = this.shipment$['del_id'];
+    if (this.shipment$['unit_id'] === 'KG') {
+      this.unit_id = '1';
+    } else if (this.shipment$['unit_id'] === 'TONNA') {
+      this.unit_id = '0';
+    } else {this.unit_id = '2'; }
     this.shipmentForm.setValue({
       title: this.shipment$['title'],
       declare_value : this.shipment$['declare_value'],
-      unit_id: this.shipment$['unit_id'],
+      unit_id: this.shipment$['unit_id'].toString(),
       del_id: this.shipment$['del_id'],
       uid: this.shipment$['uid']
     });
@@ -78,8 +83,7 @@ export class ShipmentEditComponent implements AfterViewInit, AfterViewChecked {
 
 
   }
-  back()
-  {
+  back() {
     history.back();
   }
 

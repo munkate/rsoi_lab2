@@ -42,8 +42,7 @@ export class ShipmentAddComponent implements OnInit {
      const nextUid = Math.floor((Math.random() * 1000) + 10);
     this.shipmentForm.controls['del_id'].setValue(this.del_id);
     this.shipmentForm.controls['uid'].setValue(nextUid);
-
-    console.log(sessionStorage.getItem(this.i.toString()));
     this.i = this.i + 1;
+    alert('Груз добавлен в список.');
   }
 }

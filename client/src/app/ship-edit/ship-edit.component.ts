@@ -17,7 +17,7 @@ export class ShipEditComponent implements AfterViewInit, AfterViewChecked {
   capacity: number = null;
   type_id: string;
   uid: number;
-  type: number;
+  type: string;
   isLoadingResults = false;
   private firstCheck = true;
 
@@ -49,9 +49,9 @@ export class ShipEditComponent implements AfterViewInit, AfterViewChecked {
 
   getShipData() {
     if (this.ship$['type_id'] === 'TANKER') {
-      this.type = 0;
+      this.type = '0';
     } else {
-      this.type = 1;
+      this.type = '1';
     }
     this.uid = this.ship$['uid'];
     this.shipForm.setValue({
@@ -62,6 +62,7 @@ export class ShipEditComponent implements AfterViewInit, AfterViewChecked {
       type_id: this.type,
       uid: this.ship$['uid']
     });
+    this.shipForm.controls['sh_title'];
 
   }
   onFormSubmit(form: NgForm) {

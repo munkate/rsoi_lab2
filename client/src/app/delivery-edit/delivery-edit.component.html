@@ -41,7 +41,7 @@
         </mat-error>
       </mat-form-field>
       <mat-form-field class="example-full-width">
-        <mat-select formControlName="ship_id" placeholder="Корабль">
+        <mat-select formControlName="ship_id" placeholder="Корабль" [value]="ship_id">
           <mat-option *ngFor="let ship of ships$.content" value="{{ship.uid}}">{{ship.sh_title}}</mat-option>
         </mat-select>
         <mat-error>
