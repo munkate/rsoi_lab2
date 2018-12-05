@@ -1,14 +1,25 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {
+  AfterContentChecked,
+  AfterContentInit,
+  AfterViewChecked,
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output
+} from '@angular/core';
 import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
 import {DataService} from '../data.service';
 import {ActivatedRoute, Router} from '@angular/router';
+import {ViewState} from '@angular/core/src/view';
 
 @Component({
   selector: 'app-shipment-edit',
   templateUrl: './shipment-edit.component.html',
   styleUrls: ['./shipment-edit.component.scss']
 })
-export class ShipmentEditComponent implements OnInit {
+export class ShipmentEditComponent implements AfterViewInit, AfterViewChecked {
   shipment$: Object;
   shipmentForm: FormGroup;
   title = '';
@@ -17,12 +28,12 @@ export class ShipmentEditComponent implements OnInit {
  del_id: number;
   uid: number;
   isLoadingResults = false;
+  firstCheck = true;
 
 
   constructor(private service: DataService, private route: ActivatedRoute,
-              private router: Router, private formBuilder: FormBuilder) { }
-
-  ngOnInit() {this.shipmentForm = this.formBuilder.group({
+              private router: Router, private formBuilder: FormBuilder) {
+    this.shipmentForm = this.formBuilder.group({
     'title' : ['', [Validators.required]],
     'declare_value' : [null, [Validators.required]],
     'unit_id' : [null, [Validators.required]],
@@ -30,10 +41,31 @@ export class ShipmentEditComponent implements OnInit {
     'uid': [null, [Validators.required]]
   });
     this.shipmentForm.controls['del_id'].setValue(this.del_id);
+    this.service.getShipment(this.route.snapshot.params['id']).subscribe(
+      data => this.shipment$ = data);
+  }
+  ngAfterViewChecked() {
+    if (this.firstCheck) {
+      this.onLoad();
+      this.firstCheck = false;
+    }
+  }
+  ngAfterViewInit() {
+    this.onLoad();
+  }
+  onLoad() {
+    this.uid = this.shipment$['uid'];
+    this.del_id = this.shipment$['del_id'];
+    this.shipmentForm.setValue({
+      title: this.shipment$['title'],
+      declare_value : this.shipment$['declare_value'],
+      unit_id: this.shipment$['unit_id'],
+      del_id: this.shipment$['del_id'],
+      uid: this.shipment$['uid']
+    });
+
   }
   onFormSubmit(form: NgForm) {
-    console.log('ghjikj');
-    console.log(form);
     this.isLoadingResults = true;
     this.service.updateShipment(form)
       .subscribe(res => {
@@ -46,18 +78,10 @@ export class ShipmentEditComponent implements OnInit {
 
 
   }
-  onLoad() {
-  this.service.getShipment(this.route.snapshot.params['id']).subscribe(
-    data => this.shipment$ = data);
-  this.uid = this.shipment$['uid'];
-  this.del_id = this.shipment$['del_id'];
-  this.shipmentForm.setValue({
-    title: this.shipment$['title'],
-    declare_value : this.shipment$['declare_value'],
-    unit_id: this.shipment$['unit_id'],
-    del_id: this.shipment$['del_id'],
-    uid: this.shipment$['uid']
-  });
-}
+  back()
+  {
+    history.back();
+  }
+
 
 }

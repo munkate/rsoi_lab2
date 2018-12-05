@@ -53,7 +53,7 @@ public class ShipmentController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public void deleteShipment(@PathVariable Integer id) {
+    public void deleteShipment(@PathVariable long id) {
         shipmentService.delete(id);
     }
 

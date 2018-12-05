@@ -5,22 +5,14 @@
   </div>
   <div class="button-row">
     <a mat-flat-button  (click)="back()"><mat-icon>info</mat-icon></a>
-    <a mat-flat-button  (click)="getShipData()"><mat-icon>info</mat-icon></a>
   </div>
 <mat-card class="example-card">
-  <a mat-flat-button  (click)="onLoad()"><mat-icon>info</mat-icon></a>
-  <form [formGroup]="shipmentForm" (ngLoad)="onLoad()" (ngSubmit)="onFormSubmit(shipmentForm.value)" novalidate>
-    <mat-form-field hidden class="example-full-width">
+  <form [formGroup]="shipmentForm" (ngSubmit)="onFormSubmit(shipmentForm.value)" novalidate>
+    <mat-form-field *ngIf class="example-full-width mat-badge-hidden">
       <input hidden matInput formControlName="uid" value="{{uid}}">
       <input hidden matInput formControlName="del_id" value="{{del_id}}">
       <mat-error>
         <span *ngIf="!shipmentForm.controls['uid'].valid &&shipmentForm.controls['uid'].touched" >Укажите название груза</span>
-      </mat-error>
-    </mat-form-field>
-    <mat-form-field class="example-full-width">
-      <input  matInput formControlName="del_id" value="{{del_id}}">
-      <mat-error>
-        <span *ngIf="!shipmentForm.controls['del_id'].valid &&shipmentForm.controls['del_id'].touched" >Укажите название груза</span>
       </mat-error>
     </mat-form-field>
     <mat-form-field class="example-full-width">

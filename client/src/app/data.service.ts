@@ -38,9 +38,7 @@ export class DataService {
   getShipment(id) {
     return this.http.get(`${this.apiURL}/shipments/${id}`);
   }
-  updateShipment(shipment) {
-    return this.http.post(`${this.apiURL}/shipments/edit`, shipment);
-  }
+  
   getDelivery(id) {
     return this.http.get(`${this.apiURL}/users/1/deliveries/${id}`);
   }
@@ -58,7 +56,13 @@ export class DataService {
   }
   createShipment(shipment)
   {
-    return this.http.post(`${this.apiURL}/shipments//createAgr`, shipment);
+    return this.http.post(`${this.apiURL}/shipments/create`, shipment);
+  }
+  updateShipment(shipment) {
+    return this.http.post(`${this.apiURL}/shipments/edit`, shipment);
+  }
+  deleteShipment(id){
+    return this.http.delete(`${this.apiURL}/shipments/delete/${id}`);
   }
 
 }

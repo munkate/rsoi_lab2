@@ -3,33 +3,35 @@
        *ngIf="isLoadingResults">
     <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
   </div>
-
+  <div class="button-row">
+    <button mat-flat-button  (click)="back()"><mat-icon>info</mat-icon></button>
+  </div>
   <mat-card class="example-card">
     <form [formGroup]="shipmentForm" (ngSubmit)="onFormSubmit(shipmentForm.value)" novalidate>
       <mat-form-field *ngIf class="example-full-width">
         <input hidden matInput formControlName="uid" value="{{uid}}">
         <mat-error>
-          <span *ngIf="!shipmentForm.controls['uid'].valid " >Укажите название груза</span>
+          <span *ngIf="!shipmentForm.controls['uid'].valid &&shipmentForm.controls['uid'].touched" >Укажите название груза</span>
         </mat-error>
       </mat-form-field>
-      <mat-form-field *ngIf class="example-full-width">
-        <input  matInput formControlName="del_id" value="{{del_id}}">
+      <mat-form-field  *ngIf class="example-full-width">
+        <input matInput formControlName="del_id" value="{{del_id}}">
         <mat-error>
-          <span *ngIf="!shipmentForm.controls['title'].valid " >Укажите название груза</span>
+          <span *ngIf="!shipmentForm.controls['uid'].valid &&shipmentForm.controls['uid'].touched" >Укажите название груза</span>
         </mat-error>
       </mat-form-field>
       <mat-form-field class="example-full-width">
         <input matInput placeholder="Название груза" formControlName="title"
                [errorStateMatcher]="matcher">
         <mat-error>
-          <span *ngIf="!shipmentForm.controls['title'].valid " >Укажите название груза</span>
+          <span *ngIf="!shipmentForm.controls['title'].valid &&shipmentForm.controls['title'].touched" >Укажите название груза</span>
         </mat-error>
       </mat-form-field>
       <mat-form-field class="example-full-width">
         <input matInput placeholder="Количество" formControlName="declare_value"
                [errorStateMatcher]="matcher">
         <mat-error>
-          <span *ngIf="!shipmentForm.controls['declare_value'].valid ">Укажите количество</span>
+          <span *ngIf="!shipmentForm.controls['declare_value'].valid &&shipmentForm.controls['declare_value'].touched">Укажите количество</span>
         </mat-error>
       </mat-form-field>
       <mat-form-field class="example-full-width">
@@ -39,7 +41,7 @@
           <mat-option value="2">Центнер</mat-option>
         </mat-select>
       </mat-form-field>
-        <button type="submit" align="right" [disabled]="!shipmentForm.valid" mat-raised-button color="primary">+Добавить</button>
+      <button type="submit" align="right" [disabled]="!shipmentForm.valid" mat-raised-button color="primary">+Добавить</button>
     </form>
   </mat-card>
 </div>

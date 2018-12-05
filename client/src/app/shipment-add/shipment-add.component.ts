@@ -22,7 +22,9 @@ export class ShipmentAddComponent implements OnInit {
   @Output() public responseToParent = new EventEmitter<JSON>();
 
   constructor(private service: DataService, private route: ActivatedRoute,
-              private router: Router, private formBuilder: FormBuilder) { }
+              private router: Router, private formBuilder: FormBuilder) {
+    this.del_id = this.route.params['id'];
+  }
 
   ngOnInit() {this.shipmentForm = this.formBuilder.group( {
     'title' : ['', [Validators.required]],

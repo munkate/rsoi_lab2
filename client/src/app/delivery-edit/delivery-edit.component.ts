@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {AfterViewChecked, AfterViewInit, Component, OnInit} from '@angular/core';
 import {DataService} from '../data.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
@@ -8,7 +8,7 @@ import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
   templateUrl: './delivery-edit.component.html',
   styleUrls: ['./delivery-edit.component.scss']
 })
-export class DeliveryEditComponent implements OnInit {
+export class DeliveryEditComponent implements AfterViewInit, AfterViewChecked {
   ships$: Object;
   delivery$: Object;
   deliveryForm: FormGroup;
@@ -20,12 +20,11 @@ export class DeliveryEditComponent implements OnInit {
   uid: number;
   ship_id: number;
   isLoadingResults = false;
+  firstCheck = true;
 
   constructor(private service: DataService, private route: ActivatedRoute,
               private router: Router, private formBuilder: FormBuilder) {
     this.user_id = this.route.snapshot.params['id'];
-  }
-  ngOnInit() {
     this.service.getShips().subscribe(
       data => this.ships$ = data);
     this.deliveryForm = this.formBuilder.group({
@@ -37,12 +36,20 @@ export class DeliveryEditComponent implements OnInit {
       'user_id' : [null, [Validators.required]],
       'uid' : [null, [Validators.required]]
     });
-    this.getDeliveryData();
-    }
-
-  private getDeliveryData() {
     this.service.getDelivery(this.route.snapshot.params['id']).subscribe(
       data => this.delivery$ = data['delivery']);
+  }
+  ngAfterViewChecked() {
+    if (this.firstCheck) {
+      this.getDeliveryData();
+      this.firstCheck = false;
+    }
+  }
+  ngAfterViewInit() {
+    this.getDeliveryData();
+  }
+
+  private getDeliveryData() {
     this.uid = this.delivery$['uid'];
     this.deliveryForm.setValue({
       departure_date: this.delivery$['departure_date'],
@@ -65,4 +72,8 @@ export class DeliveryEditComponent implements OnInit {
         this.isLoadingResults = false;
       });
   }
+  back() {
+    history.back();
+  }
+
 }

@@ -16,6 +16,8 @@ export class DeliveryComponent implements OnInit {
   user_id: number;
   dialogResult: string;
   response: string = String('Confirm');
+  options: Intl.DateTimeFormatOptions = {
+    day: 'numeric', month: 'numeric', year: 'numeric'};
 
   constructor(private service: DataService, private route: ActivatedRoute, private router: Router, public dialog: MatDialog) {
     this.id = this.route.snapshot.params['id'];
@@ -43,4 +45,25 @@ export class DeliveryComponent implements OnInit {
       }
     });
   }
+
+  deleteShipment(uid) {
+    const dialogRef = this.dialog.open(DialogComponent, {
+      data: 'Вы действительно хотите удалить информацию о грузе?'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog closed: ${result}`);
+      if (this.response === result) {
+        this.service.deleteShipment(uid).subscribe(res => {
+          window.location.reload();
+        }, (err) => {
+          console.log(err);
+        });
+      }
+    });
+  }
+  back() {
+    history.back();
+  }
+
 }

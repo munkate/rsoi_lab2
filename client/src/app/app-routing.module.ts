@@ -11,6 +11,8 @@ import {DeliveryComponent} from './delivery/delivery.component';
 import {DeliveryAddComponent} from './delivery-add/delivery-add.component';
 import {ShipmentEditComponent} from './shipment-edit/shipment-edit.component';
 import {DeliveryEditComponent} from './delivery-edit/delivery-edit.component';
+import {ShipmentAddComponent} from './shipment-add/shipment-add.component';
+import {DeliveryShipmentAddComponent} from './delivery-shipment-add/delivery-shipment-add.component';
 
 const routes: Routes = [
   {
@@ -20,6 +22,10 @@ const routes: Routes = [
   {
     path: 'users/:user_id/delivery',
     component: DeliveryAddComponent,
+  },
+  {
+    path: 'users/:user_id/deliveries/:id/shipment',
+    component: DeliveryShipmentAddComponent,
   },
   {
     path: 'users/:user_id/deliveries/:id/edit',
@@ -50,6 +56,7 @@ const routes: Routes = [
     path: 'deliveries',
     component: DeliveriesComponent,
   },
+
   {
     path: 'shipments/:id/edit',
     component: ShipmentEditComponent,

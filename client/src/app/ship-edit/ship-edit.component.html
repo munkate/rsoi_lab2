@@ -5,10 +5,9 @@
   </div>
   <div class="button-row">
     <a mat-flat-button  (click)="back()"><mat-icon>info</mat-icon></a>
-    <a mat-flat-button  (click)="getShipData()"><mat-icon>info</mat-icon></a>
   </div>
   <mat-card class="example-card">
-    <form [formGroup]="shipForm" (ngSubmit)="onFormSubmit(shipForm.value)" (loadstart)="getShipData()" >
+    <form [formGroup]="shipForm" (ngSubmit)="onFormSubmit(shipForm.value)" >
       <input hidden [formControlName]="uid">
       <mat-form-field class="example-full-width">
         <input matInput placeholder="Название корабля" formControlName="sh_title"

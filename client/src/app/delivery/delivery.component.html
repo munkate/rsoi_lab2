@@ -24,7 +24,7 @@
       <li> Название: {{shipment.title}}</li>
       <li>Количество: {{shipment.declare_value}}</li>
       <li>Единицы измерения: {{shipment.unit_id}}</li>
-      <li><button mat-raised-button>Удалить</button>
+      <li><button mat-raised-button (click)="deleteShipment(shipment.uid)" >Удалить</button>
         <button mat-raised-button routerLink="/shipments/{{shipment?.uid}}/edit">Редактировать</button></li>
 
     </ul>
@@ -32,5 +32,6 @@
     <button mat-raised-button (click)="delete()">Удалить</button>
     <button mat-raised-button (click)="back()">Назад</button>
     <button mat-raised-button routerLink="/users/1/deliveries/{{delivery$.delivery.uid}}/edit">Редактировать</button>
+    <button mat-raised-button routerLink="/users/1/deliveries/{{delivery$.delivery.uid}}/shipment">Добавить груз</button>
   </li>
 </ul>

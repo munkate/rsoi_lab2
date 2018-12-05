@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {AfterViewChecked, AfterViewInit, Component, OnInit} from '@angular/core';
 import {FormControl, FormGroupDirective, FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
 import {DataService} from '../data.service';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -8,7 +8,7 @@ import {ActivatedRoute, Router} from '@angular/router';
   templateUrl: './ship-edit.component.html',
   styleUrls: ['./ship-edit.component.scss']
 })
-export class ShipEditComponent implements OnInit {
+export class ShipEditComponent implements AfterViewInit, AfterViewChecked {
   ship$: Object;
   shipForm: FormGroup;
   sh_title = '';
@@ -19,6 +19,7 @@ export class ShipEditComponent implements OnInit {
   uid: number;
   type: number;
   isLoadingResults = false;
+  private firstCheck = true;
 
   constructor(private service: DataService, private route: ActivatedRoute,
               private router: Router, private formBuilder: FormBuilder) {
@@ -31,18 +32,22 @@ export class ShipEditComponent implements OnInit {
       'type_id' : [null, [Validators.required]],
       'uid' : [null, [Validators.required]]
     });
-
+    this.service.getShip(this.route.snapshot.params['id']).subscribe(
+      data => this.ship$ = data);
   }
 
-  ngOnInit() {
-
+  ngAfterViewChecked() {
+    if (this.firstCheck) {
+      this.getShipData();
+      this.firstCheck = false;
+    }
+  }
+  ngAfterViewInit() {
     this.getShipData();
   }
 
 
   getShipData() {
-    this.service.getShip(this.route.snapshot.params['id']).subscribe(
-      data => this.ship$ = data);
     if (this.ship$['type_id'] === 'TANKER') {
       this.type = 0;
     } else {

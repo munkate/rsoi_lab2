@@ -4,12 +4,11 @@
     <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
   </div>
   <div class="button-row">
-    <a mat-flat-button  [routerLink]="['/users/1/deliveries']"><mat-icon>list</mat-icon></a>
-    <a mat-flat-button  (click)="getDeliveryData()"><mat-icon>list</mat-icon></a>
+    <a mat-flat-button  (click)="back()"><mat-icon>info</mat-icon></a>
   </div>
   <mat-card class="example-card">
     <form [formGroup]="deliveryForm" (ngSubmit)="onFormSubmit(deliveryForm.value)" novalidate>
-      <mat-form-field  hidden class="example-full-width">
+      <mat-form-field  *ngIf class="example-full-width">
         <input hidden matInput  formControlName="uid" value="{{id}}">
 
       </mat-form-field>
