@@ -10,8 +10,10 @@
     <form [formGroup]="deliveryForm" (ngSubmit)="onFormSubmit(deliveryForm.value)" novalidate>
       <mat-form-field  *ngIf class="example-full-width">
         <input hidden matInput  formControlName="uid" value="{{id}}">
+        <input hidden matInput  formControlName="user_id" value="{{user_id}}">
 
       </mat-form-field>
+
       <mat-form-field class="example-full-width">
         <input type="date"  matInput placeholder="Дата отправки" formControlName="departure_date"
                [errorStateMatcher]="matcher">
@@ -52,8 +54,8 @@
           <span *ngIf="!deliveryForm.controls['ship_id'].valid &&deliveryForm.controls['ship_id'].touched">Укажите корабль</span>
         </mat-error>
       </mat-form-field>
-      <mat-select  formControlName="user_id">
-        <mat-option aria-selected="true" value="1">1</mat-option>
+      <mat-select  formControlName="user_id" value="1">
+        <mat-option value="1">1</mat-option>
       </mat-select>
 
         <app-shipment-add (onFormSubmit)='receiveFromChild($event)' [del_id]="this.id"></app-shipment-add>
