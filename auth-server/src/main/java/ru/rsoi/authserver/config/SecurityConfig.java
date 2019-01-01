@@ -5,11 +5,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.approval.ApprovalStore;
 import org.springframework.security.oauth2.provider.approval.TokenApprovalStore;
@@ -18,44 +22,49 @@ import org.springframework.security.oauth2.provider.request.DefaultOAuth2Request
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import ru.rsoi.authserver.service.CustomUserDetailsService;
 
+
 @Configuration
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
+  /*  @Autowired
 
-    private ClientDetailsService clientDetailsService;
+    private ClientDetailsService clientDetailsService;*/
 
     @Autowired
 
     public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
 
+        PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+
         auth.inMemoryAuthentication()
 
-                .withUser("bill").password(passwordEncoder().encode("abc123")).roles("ADMIN").and()
+                .withUser("bill").password(encoder.encode("abc123")).roles("ADMIN").and()
 
-                .withUser("bob").password("abc123").roles("USER");
+                .withUser("bob").password(encoder.encode("abc123")).roles("USER");
 
     }
 
-    @Override
+
+
+/* @Override
 
     protected void configure(HttpSecurity http) throws Exception {
 
-        http
 
-                .csrf().disable()
-
-                .anonymous().disable()
-
-                .authorizeRequests()
-
-                .antMatchers("/oauth/token").permitAll();
-
+      http.antMatcher("/**")
+              .authorizeRequests()
+              .antMatchers("/", "/login**", "/oauth/authorize**").permitAll()
+              .anyRequest().permitAll()
+              .and().exceptionHandling()
+      .and().csrf();
     }
 
-    @Override
+   /* @Override
 
     @Bean
 
@@ -63,7 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         return super.authenticationManagerBean();
 
-    }
+    }/*
 
     @Bean
 
@@ -72,7 +81,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new InMemoryTokenStore();
 
     }
-
     @Bean
 
     @Autowired
@@ -105,9 +113,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     }
 
+    @SuppressWarnings("deprecation")
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
+    public static NoOpPasswordEncoder passwordEncoder() {
+        return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
+    }*/
 }
 

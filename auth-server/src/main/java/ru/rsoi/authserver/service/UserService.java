@@ -1,5 +1,7 @@
 package ru.rsoi.authserver.service;
 
+import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import ru.rsoi.authserver.model.UserModel;
@@ -20,6 +22,8 @@ public interface UserService {
     void createUser(UserModel model);
     @Nullable
     UserModel getUserByLogin(String login);
+
+  //  JSONObject getAccessToken(HttpHeaders request);
 
 
 }

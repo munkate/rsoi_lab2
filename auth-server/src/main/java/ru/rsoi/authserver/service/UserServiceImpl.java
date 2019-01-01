@@ -1,7 +1,10 @@
 package ru.rsoi.authserver.service;
 
+import com.oracle.webservices.internal.api.message.ContentType;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -9,7 +12,9 @@ import ru.rsoi.authserver.entity.User;
 import ru.rsoi.authserver.model.UserModel;
 import ru.rsoi.authserver.repository.UserRepository;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,7 +44,19 @@ public class UserServiceImpl implements UserService {
             return null;
         }
     }
-
+/*@Override
+    public JSONObject getAccessToken(HttpHeaders request)
+    {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpPost httpPost = new HttpPost("http://localhost:8083/deliveries/editdelivery");
+            httpPost.setEntity(new StringEntity(JSONObject.toJSONString((Map<String, ?>) delivery), ContentType.APPLICATION_JSON));
+            try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {
+                LOGGER.info("Delivery updated");
+            }
+        } catch (IOException e) {
+            LOGGER.error("Exception caught.", e);
+        }
+    }*/
     @Nullable
     @Override
     public UserModel getUserByLogin(String login) {

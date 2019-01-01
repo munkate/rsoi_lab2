@@ -15,8 +15,8 @@ public class UserModel {
     private String inn;
 
     private long uid;
-    private String login;
-    private String password;
+    private String userlogin;
+    private String userpassword;
 
     public UserModel() {
     }
@@ -28,24 +28,24 @@ public class UserModel {
         this.address = address;
         this.bank = bank;
         this.inn = inn;
-        this.login = login;
-        this.password=password;
+        this.userlogin = login;
+        this.userpassword=password;
     }
 
     public String getLogin() {
-        return login;
+        return userlogin;
     }
 
     public void setLogin(String login) {
-        this.login = login;
+        this.userlogin = login;
     }
 
     public String getPassword() {
-        return password;
+        return userpassword;
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.userpassword = password;
     }
 
     public String getLast_name() {
