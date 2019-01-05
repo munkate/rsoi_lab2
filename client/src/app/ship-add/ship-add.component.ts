@@ -27,8 +27,8 @@ export class ShipAddComponent implements OnInit {
   }
 
   ngOnInit() { this.shipForm = this.formBuilder.group({
-    'sh_title' : ['', [Validators.required]],
-    'skipper' : ['', [Validators.required]],
+    'sh_title' : ['', [Validators.pattern('[a-zA-Z]*')]],
+    'skipper' : ['', [Validators.pattern('[a-zA-Z]*')]],
     'year' : [null, [Validators.required]],
     'capacity' : [null, [Validators.required]],
     'type_id' : ['', [Validators.required]],

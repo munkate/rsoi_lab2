@@ -2,9 +2,12 @@ package ru.rsoi.authserver.config;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +29,7 @@ public class OAuth2ServerConfig extends AuthorizationServerConfigurerAdapter {
     @Autowired
     private RedisConnectionFactory cf;
 
+
     @Bean
     public TokenStore tokenStore() {
         return new RedisTokenStore(cf);
@@ -44,7 +48,7 @@ public class OAuth2ServerConfig extends AuthorizationServerConfigurerAdapter {
                 .authorities("ROLE_CLIENT", "ROLE_ANDROID_CLIENT")
                 .scopes("read", "write", "trust")
                 .resourceIds("oauth2-resource")
-                .redirectUris("localhost:8085/api/login")
+                .redirectUris("http://localhost:8080/login")
                 .accessTokenValiditySeconds(3600)
                 .secret(passwordEncoder().encode("acmesecret")).refreshTokenValiditySeconds(50000);
     }

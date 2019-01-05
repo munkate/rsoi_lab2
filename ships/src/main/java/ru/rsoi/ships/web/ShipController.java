@@ -2,9 +2,11 @@ package ru.rsoi.ships.web;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.rsoi.ships.model.ShipInfo;
 import ru.rsoi.ships.service.ShipService;
@@ -34,8 +36,13 @@ public class ShipController {
     }
 
     @PostMapping("/createship")
-    public void createShip(@RequestBody ShipInfo ship) {
-        shipService.createShip(ship);
+    public ResponseEntity<String> createShip(@RequestBody ShipInfo ship) {
+
+        try{shipService.createShip(ship);
+        return ResponseEntity.ok("Ship created.");
+        } catch (RuntimeException e){
+            return ResponseEntity.badRequest().body("Invalid data.");
+        }
     }
 
     @PostMapping("/edit")

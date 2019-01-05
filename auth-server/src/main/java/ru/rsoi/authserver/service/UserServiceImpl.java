@@ -1,6 +1,13 @@
 package ru.rsoi.authserver.service;
 
 import com.oracle.webservices.internal.api.message.ContentType;
+import jdk.nashorn.internal.parser.JSONParser;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
@@ -12,6 +19,7 @@ import ru.rsoi.authserver.entity.User;
 import ru.rsoi.authserver.model.UserModel;
 import ru.rsoi.authserver.repository.UserRepository;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +30,7 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     @Override
     public List<UserModel> findAll() {
@@ -44,19 +53,22 @@ public class UserServiceImpl implements UserService {
             return null;
         }
     }
-/*@Override
-    public JSONObject getAccessToken(HttpHeaders request)
+@Override
+    public CloseableHttpResponse getAccessToken(String code)
     {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpPost httpPost = new HttpPost("http://localhost:8083/deliveries/editdelivery");
-            httpPost.setEntity(new StringEntity(JSONObject.toJSONString((Map<String, ?>) delivery), ContentType.APPLICATION_JSON));
+            HttpPost httpPost = new HttpPost("http://localhost:8080/oauth/token?client_id=acme&client_secret=acmesecret&grant_type=authorization_code&code="+code+"&redirect_uri=example.ru");
+
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {
                 LOGGER.info("Delivery updated");
+                return httpClient.execute(httpPost);
             }
         } catch (IOException e) {
             LOGGER.error("Exception caught.", e);
+            return null;
         }
-    }*/
+
+    }
     @Nullable
     @Override
     public UserModel getUserByLogin(String login) {

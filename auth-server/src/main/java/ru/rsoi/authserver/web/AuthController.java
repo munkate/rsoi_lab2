@@ -24,8 +24,8 @@ public class AuthController {
     UserService service;
 
     @GetMapping("/login")
-    public ResponseEntity<Void> login() {
-
+    public ResponseEntity<Void> login(@RequestParam("code") String code) {
+    service.getAccessToken(code);
       return ResponseEntity.ok().build();
     }
 

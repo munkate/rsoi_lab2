@@ -28,10 +28,10 @@ export class DeliveryEditComponent implements AfterViewInit, AfterViewChecked {
     this.service.getShips().subscribe(
       data => this.ships$ = data);
     this.deliveryForm = this.formBuilder.group({
-      'departure_date' : ['', [Validators.required]],
-      'arrive_date' : [null, [Validators.required]],
-      'origin' : [null, [Validators.required]],
-      'destination' : [null, [Validators.required]],
+      'departure_date' : ['', [Validators.pattern('[0-9]-*')]],
+      'arrive_date' : [null, [Validators.pattern('[0-9]-*')]],
+      'origin' : [null, [Validators.pattern('[a-zA-Z]*')]],
+      'destination' : [null, [Validators.pattern('[a-zA-Z]*')]],
       'ship_id' : [null, [Validators.required]],
       'user_id' : [null, [Validators.required]],
       'uid' : [null, [Validators.required]]
