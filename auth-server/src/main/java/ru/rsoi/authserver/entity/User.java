@@ -1,6 +1,7 @@
 package ru.rsoi.authserver.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "users",schema = "public")
@@ -31,7 +32,7 @@ public class User {
     @Column(name = "login", length = 20)
     private String userlogin;
     @Column(name = "password", length = 20)
-    private String userpassword;
+    private String password;
 
     @Column(name = "uid", unique = true)
     private long uid;
@@ -55,7 +56,7 @@ public class User {
         this.bank = bank;
         this.inn = inn;
         this.userlogin = login;
-        this.userpassword = password;
+        this.password = password;
     }
 
     public String getLogin() {
@@ -67,11 +68,11 @@ public class User {
     }
 
     public String getPassword() {
-        return userpassword;
+        return password;
     }
 
     public void setPassword(String password) {
-        this.userpassword = password;
+        this.password = password;
     }
 
     public Integer getId() {

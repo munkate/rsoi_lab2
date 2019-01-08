@@ -17,15 +17,13 @@ public interface UserService {
 
     List<UserModel> findAll();
 
-    void editUser(UserModel user);
+    //void editUser(User user);
 
     void deleteUserById(@NonNull Integer id);
-
-    void createUser(UserModel model);
     @Nullable
     UserModel getUserByLogin(String login);
 
-    CloseableHttpResponse getAccessToken(String code);
+  //  CloseableHttpResponse getAccessToken(String code);
 
 
 }

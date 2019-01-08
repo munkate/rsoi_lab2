@@ -1,5 +1,9 @@
 package ru.rsoi.ships.service;
 
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -12,10 +16,12 @@ import ru.rsoi.ships.entity.enums.ShipType;
 import ru.rsoi.ships.model.ShipInfo;
 import ru.rsoi.ships.repository.ShipRepository;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Random;
 
 @Service
@@ -25,6 +31,22 @@ public class ShipServiceImpl implements ShipService {
     private ShipRepository shipRepository;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShipServiceImpl.class);
+
+    @Override
+    public boolean checkToken(String token){
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpGet httpGet = new HttpGet("http://localhost:8085/api/oauth/check_token");
+            httpGet.addHeader("Authorization", token);
+            try (CloseableHttpResponse httpResponse = httpClient.execute(httpGet)) {
+                LOGGER.info("Access is allowed");
+                return httpResponse.getParams().getBooleanParameter("active", true);
+            }
+        } catch (IOException e) {
+            LOGGER.error("Access denied.", e);
+            return false;
+        }
+
+    }
 
 
     @Override

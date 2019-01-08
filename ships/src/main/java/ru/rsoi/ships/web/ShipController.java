@@ -1,15 +1,21 @@
 package ru.rsoi.ships.web;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.rsoi.ships.model.ShipInfo;
 import ru.rsoi.ships.service.ShipService;
+import ru.rsoi.ships.service.ShipServiceImpl;
+
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/ships")
@@ -17,11 +23,13 @@ import ru.rsoi.ships.service.ShipService;
 public class ShipController {
     @Autowired
     private ShipService shipService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShipController.class);
 
     @GetMapping("/{id}")
-    public ShipInfo ShipById(@PathVariable long id) {
-
-        return shipService.getById(id);
+    @PreAuthorize("hasAuthority(ROLE_USER)")
+    public ShipInfo ShipById(@PathVariable long id,
+                             @RequestHeader(value="Authorization") String authorizationHeader) {
+          return shipService.getById(id);
     }
 
     @GetMapping

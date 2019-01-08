@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.rsoi.authserver.model.UserModel;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Service
@@ -32,8 +33,8 @@ public class CustomUserDetailsService implements UserDetailsService {
             return User.withDefaultPasswordEncoder()
                     .username(result.getLogin())
                     .password(result.getPassword())
-                    .roles("ROLE_USER")
+                    .roles("ROLES_USER")
                     .build();
-        } else throw new UsernameNotFoundException("Пользователь не найден");
+        } else throw new UsernameNotFoundException("User not found");
     }
 }

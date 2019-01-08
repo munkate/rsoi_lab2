@@ -21,6 +21,7 @@ import ru.rsoi.authserver.repository.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -53,7 +54,7 @@ public class UserServiceImpl implements UserService {
             return null;
         }
     }
-@Override
+/*@Override
     public CloseableHttpResponse getAccessToken(String code)
     {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
@@ -68,12 +69,12 @@ public class UserServiceImpl implements UserService {
             return null;
         }
 
-    }
+    }*/
     @Nullable
     @Override
     public UserModel getUserByLogin(String login) {
         try{
-            UserModel model = buildUserModel( userRepository.findByLogin(login));
+            UserModel model = buildUserModel(userRepository.findByLogin(login));
             return model;
         }
         catch(RuntimeException e)
@@ -89,21 +90,15 @@ public class UserServiceImpl implements UserService {
 
     }
 
+
+/*
     @Override
-    public void createUser(UserModel model) {
-
-        User user = new User(model.getLast_name(), model.getFirst_name(), model.getSecond_name(), model.getAddress(), model.getBank(), model.getInn(), model.getLogin(),model.getPassword());
-        userRepository.save(user);
-
-    }
-
-    @Override
-    public void editUser(UserModel user) {
+    public void editUser(User user) {
         User new_user = getEntity(user);
         BeanUtils.copyProperties(user,new_user);
         userRepository.saveAndFlush(new_user);
 
-    }
+    }*/
 
     @NonNull
     private UserModel buildUserModel(User user) {

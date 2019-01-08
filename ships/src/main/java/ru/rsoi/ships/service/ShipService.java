@@ -18,4 +18,6 @@ public interface ShipService {
 
     Page<ShipInfo> listAllByPage(Pageable pageable);
     ShipInfo getModelFromHashMap(LinkedHashMap<String,Object> model);
+
+    boolean checkToken(String token);
 }
