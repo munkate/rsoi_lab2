@@ -13,6 +13,7 @@ import {ShipmentEditComponent} from './shipment-edit/shipment-edit.component';
 import {DeliveryEditComponent} from './delivery-edit/delivery-edit.component';
 import {ShipmentAddComponent} from './shipment-add/shipment-add.component';
 import {DeliveryShipmentAddComponent} from './delivery-shipment-add/delivery-shipment-add.component';
+import {LoginComponent} from './login/login.component';
 
 const routes: Routes = [
   {
@@ -47,7 +48,10 @@ const routes: Routes = [
     path: 'ships/:id',
     component: ShipComponent,
   },
-
+  {
+    path: 'login',
+    component: LoginComponent,
+  },
   {
     path: 'ships',
     component: ShipsComponent,

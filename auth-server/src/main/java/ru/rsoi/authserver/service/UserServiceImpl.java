@@ -1,29 +1,29 @@
 package ru.rsoi.authserver.service;
 
-import com.oracle.webservices.internal.api.message.ContentType;
-import jdk.nashorn.internal.parser.JSONParser;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
-import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.rsoi.authserver.entity.User;
 import ru.rsoi.authserver.model.UserModel;
 import ru.rsoi.authserver.repository.UserRepository;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -111,6 +111,30 @@ public class UserServiceImpl implements UserService {
     private User getEntity(UserModel model) {
         User user = userRepository.findByUid(model.getUid());
         return user;
+    }
+    @Override
+    public JSONObject getAccessToken(String login, String password) throws JSONException {
+        UserModel user =  getUserByLogin(login);
+        if (user!=null){
+
+        if (BCrypt.checkpw(password,user.getPassword()))
+        {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpPost httpPost = new HttpPost("http://localhost:8080/oauth/token?redirect_uri=http://localhost:8080/login&grant_type=password&username="+login+"&password="+password);
+            httpPost.addHeader("Content-Type","application/x-www-form-urlencoded");
+            try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {
+               String response = EntityUtils.toString(httpResponse.getEntity());
+                return new JSONObject(response);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } catch (IOException e) {
+            return null;
+        }}
+        else return new JSONObject().put("response","Неверный логин или пароль.");
+    }
+    else return null;
     }
 
 }

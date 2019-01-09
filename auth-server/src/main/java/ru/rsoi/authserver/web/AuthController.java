@@ -1,11 +1,18 @@
 package ru.rsoi.authserver.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 import ru.rsoi.authserver.entity.User;
+import ru.rsoi.authserver.model.UserModel;
 import ru.rsoi.authserver.repository.UserRepository;
 import ru.rsoi.authserver.service.UserService;
 
@@ -14,30 +21,29 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
-@RestController
-/*@RequestMapping("/")*/
+@RestController/*
+@RequestMapping("/")*/
 @CrossOrigin
 public class AuthController {
-    @Autowired
-    UserRepository repository;
+
     @Autowired
     UserService service;
+    @Qualifier("customUserDetailsService")
+    @Autowired
+    UserDetailsService detailService;
 
-    /*@GetMapping("/login")
-    public ResponseEntity<Void> login(@RequestParam("code") String code) {
-    service.getAccessToken(code);
-      return ResponseEntity.ok().build();
-    }*/
+   @GetMapping("/login")
+    public ResponseEntity<String> login(@RequestParam("login") String login, @RequestParam("password") String password) throws JSONException {
+     JSONObject response = service.getAccessToken(login, password);
+     if (response==null||response.has("response"))
+     {  return ResponseEntity.status(401).body("Неверный логин или пароль");}
+    else return ResponseEntity.ok(response.toString());
+    }
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<UserDetails> getUser(@PathVariable long id) {
-        Collection authorities = new ArrayList();
-        ((ArrayList) authorities).add("read");
-
-
-        User user = repository.findByUid(id);
-        org.springframework.security.core.userdetails.User result = new org.springframework.security.core.userdetails.User(user.getLogin(), user.getPassword(),authorities);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<UserModel> getUser(@PathVariable long id) {
+        UserModel user = service.getUserByUid(id);
+        return ResponseEntity.ok(user);
     }
 }
 

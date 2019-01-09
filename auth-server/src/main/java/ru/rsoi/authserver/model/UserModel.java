@@ -8,28 +8,29 @@ public class UserModel {
 
     private String second_name;
 
-    private String address;
-
-    private String bank;
-
-    private String inn;
-
     private long uid;
     private String userlogin;
     private String userpassword;
+    private String authorities;
 
     public UserModel() {
     }
 
-    public UserModel(String last_name, String first_name, String second_name, String address, String bank, String inn, String login, String password) {
+    public UserModel(String last_name, String first_name, String second_name, String login, String password, String authorities) {
         this.last_name = last_name;
         this.first_name = first_name;
         this.second_name = second_name;
-        this.address = address;
-        this.bank = bank;
-        this.inn = inn;
         this.userlogin = login;
         this.userpassword=password;
+        this.authorities=authorities;
+    }
+
+    public String getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(String authorities) {
+        this.authorities = authorities;
     }
 
     public String getLogin() {
@@ -70,30 +71,6 @@ public class UserModel {
 
     public void setSecond_name(String second_name) {
         this.second_name = second_name;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getBank() {
-        return bank;
-    }
-
-    public void setBank(String bank) {
-        this.bank = bank;
-    }
-
-    public String getInn() {
-        return inn;
-    }
-
-    public void setInn(String inn) {
-        this.inn = inn;
     }
 
     public long getUid() {

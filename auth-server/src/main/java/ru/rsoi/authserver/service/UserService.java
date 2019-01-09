@@ -1,6 +1,7 @@
 package ru.rsoi.authserver.service;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;
@@ -22,6 +23,8 @@ public interface UserService {
     void deleteUserById(@NonNull Integer id);
     @Nullable
     UserModel getUserByLogin(String login);
+
+    JSONObject getAccessToken(String login, String password) throws JSONException;
 
   //  CloseableHttpResponse getAccessToken(String code);
 

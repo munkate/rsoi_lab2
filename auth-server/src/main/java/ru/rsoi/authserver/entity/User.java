@@ -20,15 +20,6 @@ public class User {
     @Column(name = "second_name", length = 20)
     private String second_name;
 
-    @Column(name = "address", length = 50)
-    private String address;
-
-    @Column(name = "bank", length = 50)
-    private String bank;
-
-    @Column(name = "inn", length = 20)
-    private String inn;
-
     @Column(name = "login", length = 20)
     private String userlogin;
     @Column(name = "password", length = 20)
@@ -36,6 +27,17 @@ public class User {
 
     @Column(name = "uid", unique = true)
     private long uid;
+
+    @Column(name="authorities")
+    private String authorities;
+
+    public String getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(String authorities) {
+        this.authorities = authorities;
+    }
 
     public long getUid() {
         return uid;
@@ -48,15 +50,13 @@ public class User {
     public User() {
     }
 
-    public User(String last_name, String first_name, String second_name, String address, String bank, String inn, String login, String password) {
+    public User(String last_name, String first_name, String second_name, String login, String password, String authorities) {
         this.last_name = last_name;
         this.first_name = first_name;
         this.second_name = second_name;
-        this.address = address;
-        this.bank = bank;
-        this.inn = inn;
         this.userlogin = login;
         this.password = password;
+        this.authorities = authorities;
     }
 
     public String getLogin() {
@@ -101,30 +101,6 @@ public class User {
 
     public void setSecond_name(String second_name) {
         this.second_name = second_name;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getBank() {
-        return bank;
-    }
-
-    public void setBank(String bank) {
-        this.bank = bank;
-    }
-
-    public String getInn() {
-        return inn;
-    }
-
-    public void setInn(String inn) {
-        this.inn = inn;
     }
 
 }

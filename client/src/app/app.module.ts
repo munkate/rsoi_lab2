@@ -33,6 +33,7 @@ import { ShipmentEditComponent } from './shipment-edit/shipment-edit.component';
 import { DialogComponent } from './dialog/dialog.component';
 import { DeliveryEditComponent } from './delivery-edit/delivery-edit.component';
 import { DeliveryShipmentAddComponent } from './delivery-shipment-add/delivery-shipment-add.component';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { DeliveryShipmentAddComponent } from './delivery-shipment-add/delivery-s
     ShipmentEditComponent,
     DialogComponent,
     DeliveryEditComponent,
-    DeliveryShipmentAddComponent  ],
+    DeliveryShipmentAddComponent,
+    LoginComponent  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
