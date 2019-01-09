@@ -21,8 +21,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
-@RestController/*
-@RequestMapping("/")*/
+@RestController
+@RequestMapping("/auth")
 @CrossOrigin
 public class AuthController {
 
@@ -32,14 +32,13 @@ public class AuthController {
     @Autowired
     UserDetailsService detailService;
 
-   @GetMapping("/login")
+   @PostMapping("/login")
     public ResponseEntity<String> login(@RequestParam("login") String login, @RequestParam("password") String password) throws JSONException {
      JSONObject response = service.getAccessToken(login, password);
      if (response==null||response.has("response"))
      {  return ResponseEntity.status(401).body("Неверный логин или пароль");}
     else return ResponseEntity.ok(response.toString());
     }
-
     @GetMapping("/user/{id}")
     public ResponseEntity<UserModel> getUser(@PathVariable long id) {
         UserModel user = service.getUserByUid(id);

@@ -46,20 +46,20 @@ public class OAuth2ServerConfig extends AuthorizationServerConfigurerAdapter {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        return new BCryptPasswordEncoder(12);
     }
 
     @Override
     public void configure(final ClientDetailsServiceConfigurer clients) throws Exception {
-//      clients.jdbc(this.dataSource);
-        clients.inMemory().withClient("acme")
+     clients.jdbc(this.dataSource);
+        /*clients.inMemory().withClient("acme")
                 .authorizedGrantTypes("client-credentials","authorization_code", "password","refresh_token")
                 .authorities("ROLE_CLIENT", "ROLE_ANDROID_CLIENT")
                 .scopes( "write", "trust")
                 .resourceIds("ships")
                 .redirectUris("http://localhost:8080/login")
                 .accessTokenValiditySeconds(3600)
-                .secret(passwordEncoder().encode("acmesecret")).refreshTokenValiditySeconds(50000);
+                .secret(passwordEncoder().encode("acmesecret")).refreshTokenValiditySeconds(50000);*/
     }
 
     @Override
