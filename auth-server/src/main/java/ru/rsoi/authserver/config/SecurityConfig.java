@@ -11,6 +11,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.sql.DataSource;
+
 
 @Configuration
 @EnableWebSecurity
@@ -20,6 +22,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   /*  @Autowired
 
     private ClientDetailsService clientDetailsService;*/
+  @Autowired
+  private DataSource dataSource;
 
     @Autowired
 
@@ -27,8 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         PasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
-        auth.inMemoryAuthentication()
-
+        auth.jdbcAuthentication().dataSource(dataSource)
                 .withUser("bill").password(encoder.encode("111")).roles("ADMIN").and()
 
                 .withUser("bob").password(encoder.encode("abc123")).roles("USER");
