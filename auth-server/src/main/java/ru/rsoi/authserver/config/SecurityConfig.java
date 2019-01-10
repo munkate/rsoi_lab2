@@ -29,12 +29,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
 
-        PasswordEncoder encoder = new BCryptPasswordEncoder(12);
+       // PasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
-        auth.jdbcAuthentication().dataSource(dataSource)
-                .withUser("bill").password(encoder.encode("111")).roles("ADMIN").and()
-
-                .withUser("bob").password(encoder.encode("abc123")).roles("USER");
+        auth.jdbcAuthentication().dataSource(dataSource);
 
     }
     /*@Bean

@@ -7,12 +7,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.rsoi.delivery.model.DeliveryModel;
 import ru.rsoi.delivery.service.DeliveryService;
 
 import java.text.ParseException;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/deliveries")
@@ -67,7 +69,7 @@ public class DeliveryController {
         if (page!=null&& size!=null) request = PageRequest.of(page,size);
         else request = PageRequest.of(0,20);
 
-        return ResponseEntity.ok(deliveryService.findAllByUserId(id, request));
+        return ResponseEntity.ok(Objects.requireNonNull(deliveryService.findAllByUserId(id, request)));
     }
     @GetMapping("/users/{id}/deliveries/{del_id}")
     public DeliveryModel findUserDeliveryById(@PathVariable Integer del_id) {

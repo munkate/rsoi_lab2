@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.rsoi.ships.model.ShipInfo;
 import ru.rsoi.ships.service.ShipService;
@@ -26,9 +27,10 @@ public class ShipController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ShipController.class);
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority(ROLE_USER)")
+
     public ShipInfo ShipById(@PathVariable long id,
                              @RequestHeader(value="Authorization") String authorizationHeader) {
+
           return shipService.getById(id);
     }
 

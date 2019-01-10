@@ -52,7 +52,7 @@ public class ShipmentServiceImpl implements ShipmentService {
                // for (int j=0; j<buf.values().toArray().length;j++) {
                     shipment.setTitle((String)buf.get("title"));
                     shipment.setDeclare_value(Integer.parseInt(buf.get("declare_value").toString()));
-                    shipment.setUnit_id(Unit.valueOf(Integer.parseInt(buf.get("unit_id").toString())) );
+                    shipment.setUnit_id(Unit.valueOf(Unit.valueOf(buf.get("unit_id").toString()).getValue()));//ЕСЛИ ЧТО, ТО ЗДЕСЬ ИЗМЕНИТЬ!!
                     shipment.setUid(Long.parseLong(buf.get("uid").toString()));
                     shipment.setDel_id(Integer.parseInt(buf.get("del_id").toString()));
                 new_shipments.add(shipment);

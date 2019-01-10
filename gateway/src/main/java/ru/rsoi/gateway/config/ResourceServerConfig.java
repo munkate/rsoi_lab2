@@ -1,4 +1,4 @@
-package ru.rsoi.delivery.config;
+package ru.rsoi.gateway.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,8 +14,8 @@ import org.springframework.security.oauth2.provider.token.RemoteTokenServices;
 @Configuration
 @EnableResourceServer
 @EnableGlobalMethodSecurity(prePostEnabled=true)
-public class ResourceServerOAuth2Config extends ResourceServerConfigurerAdapter {
-    private static final String RESOURCE_ID = "deliveries";
+public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
+    private static final String RESOURCE_ID = "aggregationServer";
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) {
@@ -27,7 +27,7 @@ public class ResourceServerOAuth2Config extends ResourceServerConfigurerAdapter 
         http
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
-                /*.antMatchers("/users/**").authenticated()*/
+                .antMatchers("/users/**").authenticated()
                 .and().exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler());
     }
     @Primary
@@ -35,8 +35,8 @@ public class ResourceServerOAuth2Config extends ResourceServerConfigurerAdapter 
     public RemoteTokenServices tokenServices() {
         final RemoteTokenServices tokenService = new RemoteTokenServices();
         tokenService.setCheckTokenEndpointUrl("http://localhost:8085/api/oauth/check_token");
-        tokenService.setClientId("acme");
-        tokenService.setClientSecret("111");
+        tokenService.setClientId("app2");
+        tokenService.setClientSecret("acmesecret");
         return tokenService;
     }
 }
