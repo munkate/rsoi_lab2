@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import redis.clients.jedis.Jedis;
 import ru.rsoi.gateway.response.ResponsePageImpl;
 import ru.rsoi.models.DeliveryModel;
 import ru.rsoi.models.ShipInfo;
@@ -30,11 +31,15 @@ import java.util.Map;
 public class DeliveryFullInformationImpl implements DeliveryFullInformation {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeliveryFullInformationImpl.class);
+    private Jedis jedis = new Jedis("127.0.0.1",6379);
+
 
     @Override
     public void editDelivery(JSONObject delivery) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            String token = getToken("deliveries","http://localhost:8083/deliveries/token", "http://localhost:8083/deliveries/checktoken");
             HttpPost httpPost = new HttpPost("http://localhost:8083/deliveries/editdelivery");
+            httpPost.addHeader("token", token);
             httpPost.setEntity(new StringEntity(JSONObject.toJSONString((Map<String, ?>) delivery), ContentType.APPLICATION_JSON));
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {
                 LOGGER.info("Delivery updated");
@@ -44,13 +49,56 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
         }
     }
 
+
+    private boolean checkToken(String checkUrl, String jwt) {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpPost checkRequest = new HttpPost(checkUrl);
+            checkRequest.addHeader("token", jwt);
+            try (CloseableHttpResponse httpResponse = httpClient.execute(checkRequest)) {
+                String res = EntityUtils.toString(httpResponse.getEntity());
+                if (res.equals("true")){return true;}
+                else return false;
+            }
+        } catch (IOException e1) {
+            e1.printStackTrace();
+            return false;
+        }
+    }
+
+    private String getToken(String service,String tokenUrl, String checkUrl)
+    {
+
+
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+           String jwt = jedis.get(service);
+           if (jwt==null || !checkToken(checkUrl,jwt)){
+            HttpPost httpPost = new HttpPost(tokenUrl);
+            httpPost.addHeader("clientId","gateway");
+            httpPost.addHeader("clientSecret","gateway");
+            try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+                String res = EntityUtils.toString(response.getEntity());
+                jedis.set(service,res);
+                return res;
+            }
+           }
+
+            else return jwt;
+            } catch (IOException e1) {
+            e1.printStackTrace();
+            return null;
+        }
+
+    }
+
     @Override
     public JSONObject getUserDeliveriesFullInfo(Integer user_id, Pageable pageable) {
             JSONObject response = new JSONObject();
             ResponsePageImpl<DeliveryModel> del_model = null;
             ObjectMapper mapper = new ObjectMapper();
+            String token = getToken("deliveries","http://localhost:8083/deliveries/token", "http://localhost:8083/deliveries/checktoken");
             try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
                 HttpGet httpGet = new HttpGet("http://localhost:8083/deliveries/users/"+user_id+"/deliveries?page="+pageable.getPageNumber()+"&size="+pageable.getPageSize());
+                httpGet.addHeader("token", token);
                 try (CloseableHttpResponse httpResponse = httpClient.execute(httpGet)) {
                     del_model = mapper.readValue(EntityUtils.toString(httpResponse.getEntity()), new TypeReference<ResponsePageImpl<DeliveryModel>>(){});
                 }
@@ -69,7 +117,9 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
         List<ShipmentInfo> shipment_model=null;
         ObjectMapper mapper = new ObjectMapper();
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            String token = getToken("deliveries","http://localhost:8083/deliveries/token", "http://localhost:8083/deliveries/checktoken");
             HttpGet httpGet = new HttpGet("http://localhost:8083/deliveries/" + del_id + "");
+            httpGet.addHeader("token", token);
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpGet)) {
                 del_model = mapper.readValue(EntityUtils.toString(httpResponse.getEntity()), DeliveryModel.class);
             }
@@ -77,7 +127,9 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
             LOGGER.error("Exception caught.", e);
         }
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            String token = getToken("ships","http://localhost:8082/ships/token", "http://localhost:8082/ships/checktoken");
             HttpGet httpGet = new HttpGet("http://localhost:8082/ships/" + del_model.getShip_id() + "");
+            httpGet.addHeader("token", token);
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpGet)) {
 
                 ship_model = mapper.readValue(EntityUtils.toString(httpResponse.getEntity()), ShipInfo.class);
@@ -86,7 +138,9 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
             LOGGER.error("Exception caught.", e);
         }
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            String token = getToken("shipments","http://localhost:8081/shipments/token", "http://localhost:8081/shipments/checktoken");
             HttpGet httpGet = new HttpGet("http://localhost:8081/shipments/deliveries/" + del_id + "");
+            httpGet.addHeader("token", token);
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpGet)) {
                 shipment_model = mapper.readValue(EntityUtils.toString(httpResponse.getEntity()), new TypeReference<List<ShipmentInfo>>() {});
             }
@@ -102,7 +156,9 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
     @Override
     public void deleteDelivery(Integer del_id) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            String token = getToken("shipments","http://localhost:8081/shipments/token", "http://localhost:8081/shipments/checktoken");
             HttpDelete httpDelete = new HttpDelete("http://localhost:8081/shipments/deleteAll/" + del_id+ "");
+            httpDelete.addHeader("token",token);
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpDelete)) {
                 LOGGER.info("All shipments with del_id="+del_id+" deleted.");
             }
@@ -111,7 +167,9 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
         }
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            String token = getToken("deliveries","http://localhost:8083/deliveries/token", "http://localhost:8083/deliveries/checktoken");
             HttpDelete httpDelete = new HttpDelete("http://localhost:8083/deliveries/" + del_id + "");
+            httpDelete.addHeader("token",token);
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpDelete)) {
                 LOGGER.info("Delivery with id="+del_id+" deleted.");
             }
@@ -124,8 +182,10 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
     @Override
     public void createDelivery(JSONObject data) {
           try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpPost httpPost = new HttpPost("http://localhost:8083/deliveries/createdeliveryAgr");
-            httpPost.setEntity(new StringEntity(JSONObject.toJSONString((Map<String, ?>) data.get("delivery")), ContentType.APPLICATION_JSON));
+              String token = getToken("deliveries","http://localhost:8083/deliveries/token", "http://localhost:8083/deliveries/checktoken");
+              HttpPost httpPost = new HttpPost("http://localhost:8083/deliveries/createdeliveryAgr");
+              httpPost.addHeader("token", token);
+              httpPost.setEntity(new StringEntity(JSONObject.toJSONString((Map<String, ?>) data.get("delivery")), ContentType.APPLICATION_JSON));
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {
                 LOGGER.info("Delivery created.");
             }
@@ -133,7 +193,9 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
             LOGGER.error("Exception caught.", e);
         }
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            String token = getToken("shipments","http://localhost:8081/shipments/token", "http://localhost:8081/shipments/checktoken");
             HttpPost httpPost = new HttpPost("http://localhost:8081/shipments/createAgr");
+            httpPost.addHeader("token", token);
             httpPost.setEntity(new StringEntity(JSONArray.toJSONString((List<? extends Object>) data.get("shipments")), ContentType.APPLICATION_JSON));
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {
                 LOGGER.info("Shipment created.");

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.rsoi.shipments.model.ShipmentInfo;
 import ru.rsoi.shipments.service.ShipmentService;
@@ -22,6 +23,22 @@ import java.util.Map;
 public class ShipmentController {
     @Autowired
     private ShipmentService shipmentService;
+    @PostMapping("/token")
+    public ResponseEntity<String> getToken(@RequestHeader("clientId") String client_id, @RequestHeader("clientSecret") String client_secret){
+        if (shipmentService.checkClient(client_id,client_secret))
+        {
+            return ResponseEntity.ok(shipmentService.createJWT());
+        }
+        else return ResponseEntity.status(401).body("invalid_token");
+    }
+
+    @PostMapping("/checktoken")
+    public ResponseEntity<String> checkToken(@RequestHeader("token") String jwt)
+    {
+        if (shipmentService.parseJWT(jwt))
+        {return ResponseEntity.ok("Работает");}
+        else return ResponseEntity.status(401).body("invalid_token");
+    }
 
     @GetMapping("/{id}")
     public ShipmentInfo ShipmentById(@PathVariable Integer id) {

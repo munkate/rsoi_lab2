@@ -12,7 +12,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public interface DeliveryService {
-
+    boolean checkClient(String client_id, String client_secret);
+    String createJWT();
+    boolean parseJWT(String jwt);
 
     long createDelivery(DeliveryModel delivery);
 

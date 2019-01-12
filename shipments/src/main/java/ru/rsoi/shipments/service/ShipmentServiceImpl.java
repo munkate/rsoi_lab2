@@ -1,5 +1,9 @@
 package ru.rsoi.shipments.service;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import net.minidev.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +18,10 @@ import ru.rsoi.shipments.entity.enums.Unit;
 import ru.rsoi.shipments.model.ShipmentInfo;
 import ru.rsoi.shipments.repository.ShipmentRepository;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Random;
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
+import java.security.Key;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +30,46 @@ public class ShipmentServiceImpl implements ShipmentService {
     @Autowired
     private ShipmentRepository shipmentRepository;
     private static final Logger LOGGER = LoggerFactory.getLogger(ShipmentServiceImpl.class);
+    private static final String RESOURCE_ID = "shipments";
+    private static final String RESOURCE_SECRET = "shipments";
+    private String CLIENT_ID = "gateway";
+    private String CLIENT_SECRET = "gateway";
+    private long EXPIRATION = 1000000*60*30;
+
+    @Override
+    public boolean checkClient(String client_id, String client_secret){
+        return client_id.equals(CLIENT_ID) && client_secret.equals(CLIENT_SECRET);
+
+    }
+    @Override
+    public String createJWT() {
+
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+        long nowMillis = System.currentTimeMillis();
+        Date now = new Date(nowMillis);
+
+        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(RESOURCE_SECRET);
+        Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+
+        JwtBuilder builder = Jwts.builder().setId(UUID.randomUUID().toString())
+                .setIssuedAt(now)
+                .setIssuer(RESOURCE_ID)
+                .setAudience(CLIENT_ID)
+                .signWith(signatureAlgorithm, signingKey);
+        long expMillis = nowMillis + EXPIRATION;
+        Date exp = new Date(expMillis);
+        builder.setExpiration(exp);
+        return builder.compact();
+    }
+    @Override
+    public boolean parseJWT(String jwt) {
+
+        Claims claims = Jwts.parser()
+                .setSigningKey(DatatypeConverter.parseBase64Binary(RESOURCE_SECRET))
+                .parseClaimsJws(jwt).getBody();
+        return claims.getAudience().equals(CLIENT_ID) && claims.getExpiration().after(new Date(System.currentTimeMillis()));
+    }
 
     @Override
     public long createShipment(ShipmentInfo shipment) {

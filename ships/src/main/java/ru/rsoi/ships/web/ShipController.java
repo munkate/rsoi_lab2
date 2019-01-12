@@ -43,11 +43,11 @@ public class ShipController {
     }
 
     @PostMapping("/checktoken")
-    public ResponseEntity<String> checkToken(@RequestHeader("token") String jwt)
+    public ResponseEntity<Boolean> checkToken(@RequestHeader("token") String jwt)
     {
         if (shipService.parseJWT(jwt))
-        {return ResponseEntity.ok("Работает");}
-        else return ResponseEntity.status(401).body("invalid_token");
+        {return ResponseEntity.ok(true);}
+        else return ResponseEntity.status(401).body(false);
     }
 
     @GetMapping

@@ -23,6 +23,22 @@ public class DeliveryController {
 
     @Autowired
     public DeliveryService deliveryService;
+    @PostMapping("/token")
+    public ResponseEntity<String> getToken(@RequestHeader("clientId") String client_id, @RequestHeader("clientSecret") String client_secret){
+        if (deliveryService.checkClient(client_id,client_secret))
+        {
+            return ResponseEntity.ok(deliveryService.createJWT());
+        }
+        else return ResponseEntity.status(401).body("invalid_token");
+    }
+
+    @PostMapping("/checktoken")
+    public ResponseEntity<String> checkToken(@RequestHeader("token") String jwt)
+    {
+        if (deliveryService.parseJWT(jwt))
+        {return ResponseEntity.ok("Работает");}
+        else return ResponseEntity.status(401).body("invalid_token");
+    }
 
     @GetMapping("/{id}")
     public DeliveryModel DeliveryById(@PathVariable Integer id) {
@@ -64,12 +80,14 @@ public class DeliveryController {
     }
 
     @GetMapping("/users/{id}/deliveries")
-    public ResponseEntity<Page<DeliveryModel>> findAllDeliveriesById(@PathVariable Integer id, @RequestParam(value = "page") Integer page,@RequestParam(value = "size", required = false) Integer size) {
+    public ResponseEntity<Page<DeliveryModel>> findAllDeliveriesById(@PathVariable Integer id, @RequestParam(value = "page") Integer page,
+                                                                     @RequestParam(value = "size", required = false) Integer size, @RequestHeader("token") String jwt) {
         Pageable request;
         if (page!=null&& size!=null) request = PageRequest.of(page,size);
         else request = PageRequest.of(0,20);
-
-        return ResponseEntity.ok(Objects.requireNonNull(deliveryService.findAllByUserId(id, request)));
+    if (deliveryService.parseJWT(jwt))
+    { return ResponseEntity.ok(Objects.requireNonNull(deliveryService.findAllByUserId(id, request)));}
+    else return ResponseEntity.badRequest().body(null);
     }
     @GetMapping("/users/{id}/deliveries/{del_id}")
     public DeliveryModel findUserDeliveryById(@PathVariable Integer del_id) {

@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Map;
 
 public interface ShipmentService {
+    boolean checkClient(String client_id, String client_secret);
+    String createJWT();
+    boolean parseJWT(String jwt);
 
     long createShipment(ShipmentInfo ship);
 
