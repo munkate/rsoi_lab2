@@ -33,6 +33,23 @@ public class ShipController {
           return shipService.getById(id);
     }
 
+    @PostMapping("/token")
+    public ResponseEntity<String> getToken(@RequestHeader("clientId") String client_id, @RequestHeader("clientSecret") String client_secret){
+    if (shipService.checkClient(client_id,client_secret))
+    {
+        return ResponseEntity.ok(shipService.createJWT());
+    }
+    else return ResponseEntity.status(401).body("invalid_token");
+    }
+
+    @PostMapping("/checktoken")
+    public ResponseEntity<String> checkToken(@RequestHeader("token") String jwt)
+    {
+        if (shipService.parseJWT(jwt))
+        {return ResponseEntity.ok("Работает");}
+        else return ResponseEntity.status(401).body("invalid_token");
+    }
+
     @GetMapping
     public Page<ShipInfo> findAllShips(@RequestParam("page") Integer page,@RequestParam("size") Integer size) {
         Pageable request = PageRequest.of(page,size);

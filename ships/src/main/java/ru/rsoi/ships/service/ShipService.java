@@ -19,5 +19,7 @@ public interface ShipService {
     Page<ShipInfo> listAllByPage(Pageable pageable);
     ShipInfo getModelFromHashMap(LinkedHashMap<String,Object> model);
 
-    boolean checkToken(String token);
+    boolean checkClient(String client_id, String client_secret);
+    String createJWT();
+    boolean parseJWT(String jwt);
 }

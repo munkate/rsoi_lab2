@@ -16,7 +16,6 @@ import org.springframework.security.oauth2.provider.token.RemoteTokenServices;
 @EnableGlobalMethodSecurity(prePostEnabled=true)
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     private static final String RESOURCE_ID = "ships";
-
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) {
         resources.resourceId(RESOURCE_ID).stateless(false);

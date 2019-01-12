@@ -1,5 +1,10 @@
 package ru.rsoi.ships.service;
 
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -8,44 +13,82 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 import org.springframework.stereotype.Service;
 import ru.rsoi.ships.entity.Ship;
 import ru.rsoi.ships.entity.enums.ShipType;
 import ru.rsoi.ships.model.ShipInfo;
 import ru.rsoi.ships.repository.ShipRepository;
 
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
+import java.security.Key;
+import java.util.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 @Service
 public class ShipServiceImpl implements ShipService {
+    private static final String RESOURCE_ID = "ships";
+    private static final String RESOURCE_SECRET = "ships";
+    private String CLIENT_ID = "gateway";
+    private String CLIENT_SECRET = "gateway";
+    private long EXPIRATION = 1000000*60*30;
 
     @Autowired
     private ShipRepository shipRepository;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShipServiceImpl.class);
 
-    @Override
-    public boolean checkToken(String token){
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpGet httpGet = new HttpGet("http://localhost:8085/api/oauth/check_token");
-            httpGet.addHeader("Authorization", token);
-            try (CloseableHttpResponse httpResponse = httpClient.execute(httpGet)) {
-                LOGGER.info("Access is allowed");
-                return httpResponse.getParams().getBooleanParameter("active", true);
-            }
-        } catch (IOException e) {
-            LOGGER.error("Access denied.", e);
-            return false;
-        }
 
+    @Override
+    public boolean checkClient(String client_id, String client_secret){
+        return client_id.equals(CLIENT_ID) && client_secret.equals(CLIENT_SECRET);
+
+    }
+    public String createJWT() {
+
+        //The JWT signature algorithm we will be using to sign the token
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+        long nowMillis = System.currentTimeMillis();
+        Date now = new Date(nowMillis);
+
+        //We will sign our JWT with our ApiKey secret
+        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(RESOURCE_SECRET);
+        Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+
+        //Let's set the JWT Claims
+        JwtBuilder builder = Jwts.builder().setId(UUID.randomUUID().toString())
+                .setIssuedAt(now)
+                .setIssuer(RESOURCE_ID)
+                .setAudience(CLIENT_ID)
+                .signWith(signatureAlgorithm, signingKey);
+        long expMillis = nowMillis + EXPIRATION;
+        Date exp = new Date(expMillis);
+        builder.setExpiration(exp);
+
+
+        return builder.compact();
+    }
+    public boolean parseJWT(String jwt) {
+
+        //This line will throw an exception if it is not a signed JWS (as expected)
+        Claims claims = Jwts.parser()
+                .setSigningKey(DatatypeConverter.parseBase64Binary(RESOURCE_SECRET))
+                .parseClaimsJws(jwt).getBody();
+        long d = System.currentTimeMillis();
+        return claims.getAudience().equals(CLIENT_ID) && claims.getExpiration().after(new Date(System.currentTimeMillis()));
     }
 
 
