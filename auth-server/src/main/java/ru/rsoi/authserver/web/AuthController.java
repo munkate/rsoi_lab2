@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -22,7 +23,7 @@ import java.util.Collections;
 import java.util.Iterator;
 
 @RestController
-@RequestMapping("/auth")
+//@RequestMapping("/auth")
 @CrossOrigin
 public class AuthController {
 
@@ -32,12 +33,13 @@ public class AuthController {
     @Autowired
     UserDetailsService detailService;
 
-   @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestParam("login") String login, @RequestParam("password") String password) throws JSONException {
-     JSONObject response = service.getAccessToken(login, password);
-     if (response==null||response.has("response"))
+   @GetMapping("/authentification")
+   @PreAuthorize("permitAll()")
+    public ResponseEntity<String> login(@RequestParam("login") String login, @RequestParam("password") String password){
+     String response = service.getAccessToken(login, password);
+     if (response.equals("Неверный логин или пароль"))
      {  return ResponseEntity.status(401).body("Неверный логин или пароль");}
-    else return ResponseEntity.ok(response.toString());
+    else return ResponseEntity.ok(response);
     }
     @GetMapping("/user/{id}")
     public ResponseEntity<UserModel> getUser(@PathVariable long id) {

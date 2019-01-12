@@ -28,8 +28,7 @@ public class ShipController {
 
     @GetMapping("/{id}")
 
-    public ShipInfo ShipById(@PathVariable long id,
-                             @RequestHeader(value="Authorization") String authorizationHeader) {
+    public ShipInfo ShipById(@PathVariable long id) {
 
           return shipService.getById(id);
     }

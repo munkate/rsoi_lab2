@@ -2,6 +2,7 @@ package ru.rsoi.authserver.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "users",schema = "public")
@@ -30,6 +31,39 @@ public class User {
 
     @Column(name="authorities")
     private String authorities;
+
+    @Column(name="token")
+    private String token;
+
+    @Column(name="token_validity")
+    private int validity;
+
+    @Column(name="last_activity_time")
+    private Timestamp timestamp;
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public int getValidity() {
+        return validity;
+    }
+
+    public void setValidity(int validity) {
+        this.validity = validity;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
+    }
 
     public String getAuthorities() {
         return authorities;

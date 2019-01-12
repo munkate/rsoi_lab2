@@ -5,17 +5,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.sql.DataSource;
 
 
 @Configuration
-@EnableWebSecurity
+//@EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -34,6 +31,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.jdbcAuthentication().dataSource(dataSource);
 
     }
+/* @Override
+  public void configure(WebSecurity web) throws Exception {
+    web.ignoring().antMatchers("/authentification");
+  }
     /*@Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -42,15 +43,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 */
 
 
-/* @Override
+ @Override
 
     protected void configure(HttpSecurity http) throws Exception {
 
-
-      http.antMatcher("/**")
-              .authorizeRequests()
-              .antMatchers("/", "/login**", "/oauth/authorize**").permitAll()
-              .anyRequest().permitAll();
+     http.anonymous().and().formLogin();
     }
 
    /* @Override
