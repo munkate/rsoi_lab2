@@ -5,6 +5,7 @@ import org.springframework.lang.Nullable;
 import ru.rsoi.authserver.entity.User;
 import ru.rsoi.authserver.model.UserModel;
 
+import java.util.Date;
 import java.util.List;
 
 public interface UserService {
@@ -21,6 +22,7 @@ public interface UserService {
     UserModel getUserByLogin(String login);
 
     String getAccessToken(String login, String password);
-
+    void setTime(String login, long accessDate);
+    boolean checkToken(String token);
 
 }

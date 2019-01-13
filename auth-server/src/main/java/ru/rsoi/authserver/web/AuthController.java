@@ -3,7 +3,7 @@ package ru.rsoi.authserver.web;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+import net.minidev.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,10 +17,7 @@ import ru.rsoi.authserver.model.UserModel;
 import ru.rsoi.authserver.repository.UserRepository;
 import ru.rsoi.authserver.service.UserService;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.*;
 
 @RestController
 //@RequestMapping("/auth")
@@ -35,11 +32,24 @@ public class AuthController {
 
    @GetMapping("/authentification")
    @PreAuthorize("permitAll()")
-    public ResponseEntity<String> login(@RequestParam("login") String login, @RequestParam("password") String password){
+    public ResponseEntity<JSONObject> login(@RequestParam("login") String login, @RequestParam("password") String password) throws JSONException {
      String response = service.getAccessToken(login, password);
+     JSONObject res = new JSONObject();
      if (response.equals("Неверный логин или пароль"))
-     {  return ResponseEntity.status(401).body("Неверный логин или пароль");}
-    else return ResponseEntity.ok(response);
+     {
+         res.put("error", "Неверный логин или пароль");
+         return ResponseEntity.status(401).body(res);
+     }
+    else {
+        res.put("token", response);
+        return ResponseEntity.ok(res);
+    }
+    }
+    @GetMapping("/setTime")
+    public ResponseEntity<Void> setTime(@RequestParam("token") String token, @RequestParam("date") long accessedDate)
+    {
+        service.setTime(token,accessedDate);
+        return ResponseEntity.ok().build();
     }
     @GetMapping("/user/{id}")
     public ResponseEntity<UserModel> getUser(@PathVariable long id) {

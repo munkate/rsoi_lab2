@@ -37,6 +37,8 @@ public class User {
 
     @Column(name="token_validity")
     private int validity;
+    @Column(name="enabled")
+    private boolean enabled;
 
     @Column(name="last_activity_time")
     private Timestamp timestamp;
@@ -137,4 +139,11 @@ public class User {
         this.second_name = second_name;
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
 }

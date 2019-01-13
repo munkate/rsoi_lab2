@@ -13,16 +13,28 @@ public class UserModel {
     private String userpassword;
     private String authorities;
 
+    private boolean enabled;
+
     public UserModel() {
     }
 
-    public UserModel(String last_name, String first_name, String second_name, String login, String password, String authorities) {
+    public UserModel(String last_name, String first_name, String second_name, String login, String password, String authorities, boolean enabled) {
         this.last_name = last_name;
         this.first_name = first_name;
         this.second_name = second_name;
         this.userlogin = login;
         this.userpassword=password;
         this.authorities=authorities;
+        this.enabled = enabled;
+
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public String getAuthorities() {

@@ -12,6 +12,9 @@ export class DataService {
   apiURL = 'http://localhost:8085/api';
 
   constructor(private http: HttpClient) { }
+  login(login, password) {
+    return this.http.get(`http://localhost:8085/api/authentification?login=${login}&password=${password}`);
+  }
 
   getShip(id) {
     return this.http.get(`${this.apiURL}/ships/${id}`);
@@ -38,7 +41,6 @@ export class DataService {
   getShipment(id) {
     return this.http.get(`${this.apiURL}/shipments/${id}`);
   }
-  
   getDelivery(id) {
     return this.http.get(`${this.apiURL}/users/1/deliveries/${id}`);
   }
@@ -54,14 +56,13 @@ export class DataService {
   updateDelivery(delivery) {
     return this.http.patch(`${this.apiURL}/deliveries/editdelivery`, delivery);
   }
-  createShipment(shipment)
-  {
+  createShipment(shipment) {
     return this.http.post(`${this.apiURL}/shipments/create`, shipment);
   }
   updateShipment(shipment) {
     return this.http.post(`${this.apiURL}/shipments/edit`, shipment);
   }
-  deleteShipment(id){
+  deleteShipment(id) {
     return this.http.delete(`${this.apiURL}/shipments/delete/${id}`);
   }
 

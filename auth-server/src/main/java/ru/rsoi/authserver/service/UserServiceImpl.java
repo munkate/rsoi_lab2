@@ -16,6 +16,7 @@ import ru.rsoi.authserver.model.UserToken;
 import ru.rsoi.authserver.repository.UserRepository;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -106,6 +107,7 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+
     @Override
     public String getAccessToken(String login, String password) {
         UserModel user = getUserByLogin(login);
@@ -121,6 +123,23 @@ public class UserServiceImpl implements UserService {
         else return "Неверный логин или пароль.";
     }
     else return "Пользователь не зарегистрирован.";
+    }
+
+    @Override
+    public void setTime(String token, long accessDate) {
+        if (checkToken(token))
+        {
+            Timestamp oldDate = userRepository.getTime(token);
+            if (accessDate - oldDate.getTime()<1800000)
+            {userRepository.setTime(new Timestamp(accessDate), token);}
+            else {userRepository.setDisabled(token);}
+        }
+    }
+
+    @Override
+    public boolean checkToken(String token) {
+        UserModel user = buildUserModel(userRepository.findByToken(token));
+        return user.isEnabled();
     }
 
 }

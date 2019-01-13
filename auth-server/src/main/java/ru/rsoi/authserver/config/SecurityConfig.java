@@ -31,9 +31,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.jdbcAuthentication().dataSource(dataSource);
 
     }
-/* @Override
+ @Override
   public void configure(WebSecurity web) throws Exception {
-    web.ignoring().antMatchers("/authentification");
+    web.ignoring().antMatchers("/setTime");
   }
     /*@Bean
     @Override
