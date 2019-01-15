@@ -4,11 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.stereotype.Service;
 import ru.rsoi.authserver.entity.User;
 import ru.rsoi.authserver.model.UserModel;
@@ -16,7 +15,6 @@ import ru.rsoi.authserver.model.UserToken;
 import ru.rsoi.authserver.repository.UserRepository;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -108,38 +106,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    @Override
-    public String getAccessToken(String login, String password) {
-        UserModel user = getUserByLogin(login);
-        if (user!=null){
 
-        if (BCrypt.checkpw(password,user.getPassword()))
-        {
-            UserToken token = new UserToken();
-
-            userRepository.setToken(token.getValue(),token.getValidity(),new Timestamp(System.currentTimeMillis()), user.getUid());
-            return token.getValue();
-        }
-        else return "Неверный логин или пароль.";
-    }
-    else return "Пользователь не зарегистрирован.";
-    }
-
-    @Override
-    public void setTime(String token, long accessDate) {
-        if (checkToken(token))
-        {
-            Timestamp oldDate = userRepository.getTime(token);
-            if (accessDate - oldDate.getTime()<1800000)
-            {userRepository.setTime(new Timestamp(accessDate), token);}
-            else {userRepository.setDisabled(token);}
-        }
-    }
-
-    @Override
-    public boolean checkToken(String token) {
-        UserModel user = buildUserModel(userRepository.findByToken(token));
-        return user.isEnabled();
-    }
 
 }

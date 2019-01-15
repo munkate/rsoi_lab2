@@ -47,7 +47,7 @@ public class GatewayApplicationTests {
         JSONObject response = getMockEntity();
 
 
-        when(deliveryfullService.getUserDeliveriesFullInfo(any(Integer.class),any(Pageable.class))).thenReturn(response);
+        when(deliveryfullService.getUserDeliveriesFullInfo(any(Integer.class),any(Pageable.class),anyString())).thenReturn(response);
 
         Pageable pageable = PageRequest.of(0,2);
 
@@ -61,7 +61,7 @@ public class GatewayApplicationTests {
     public void testDeleteDelivery() {
         ObjectMapper mapper = new ObjectMapper();
 
-        doNothing().when(deliveryfullService).deleteDelivery(any(Integer.class));
+        doNothing().when(deliveryfullService).deleteDelivery(any(Integer.class),anyString());
         try {
             mockMvc.perform(MockMvcRequestBuilders.delete("/agr/delete/users/1/deliveries/1")
                     .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -78,7 +78,7 @@ public class GatewayApplicationTests {
     public void testCreateDelivery() {
         JSONObject response = getMockEntity();
 
-        doNothing().when(deliveryfullService).createDelivery(any(JSONObject.class));
+        doNothing().when(deliveryfullService).createDelivery(any(JSONObject.class),anyString());
 
         ObjectMapper mapper = new ObjectMapper();
         try {
@@ -103,7 +103,7 @@ public class GatewayApplicationTests {
                 assertEquals(response.get("delivery"), actualDel);
                 return null;
             }
-        }).when(deliveryfullService).editDelivery(any(JSONObject.class));
+        }).when(deliveryfullService).editDelivery(any(JSONObject.class),anyString());
         try {
             mockMvc.perform(MockMvcRequestBuilders.patch("/agr/editdelivery")
                     .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -121,7 +121,7 @@ public class GatewayApplicationTests {
         JSONObject response = getMockEntity();
 
 
-        when(deliveryfullService.getDeliveryFullInfo(any(Integer.class))).thenReturn(response);
+        when(deliveryfullService.getDeliveryFullInfo(any(Integer.class),anyString())).thenReturn(response);
 
         Pageable pageable = PageRequest.of(0,2);
 

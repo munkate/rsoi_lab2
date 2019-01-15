@@ -25,15 +25,15 @@ export class ShipEditComponent implements AfterViewInit, AfterViewChecked {
               private router: Router, private formBuilder: FormBuilder) {
 
     this.shipForm = this.formBuilder.group({
-      'sh_title' : [null, [Validators.pattern('[a-zA-Z]*')]],
-      'skipper' : [null, [Validators.pattern('[a-zA-Z]*')]],
-      'year' : [null, [Validators.pattern('[0-9]-*')]],
-      'capacity' : [null, [Validators.pattern('[0-9]-*')]],
+      'sh_title' : [null, [Validators.required]],
+      'skipper' : [null, [Validators.required]],
+      'year' : [null, [Validators.required]],
+      'capacity' : [null, [Validators.required]],
       'type_id' : [null, [Validators.required]],
       'uid' : [null, [Validators.required]]
     });
     this.service.getShip(this.route.snapshot.params['id']).subscribe(
-      data => this.ship$ = data);
+      data => this.ship$ = data['ship']);
   }
 
   ngAfterViewChecked() {

@@ -10,6 +10,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 export class DeliveriesComponent implements OnInit {
   deliveries$: Object;
   user_id:number;
+  visible: boolean;
 
   constructor(private service: DataService, private route: ActivatedRoute, private router: Router) {
     this.user_id = this.route.snapshot.params['user_id'];
@@ -18,6 +19,7 @@ export class DeliveriesComponent implements OnInit {
   ngOnInit() {
     this.service.getDeliveries(this.user_id).subscribe(
       service => this.deliveries$ = service);
+    this.visible = localStorage.getItem('token') != null;
   }
 
 }

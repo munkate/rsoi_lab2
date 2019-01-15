@@ -3,7 +3,11 @@
   <span><h1>Доставки</h1></span>
 
 </mat-toolbar>
-<a mat-raised-button routerLink="/users/1/delivery" class="btn btn-default">Оформить доставку</a>
+<a *ngIf="visible" mat-raised-button routerLink="/users/1/delivery" class="btn btn-default">Оформить доставку</a>
+<p *ngIf="!visible">
+  Для получения сведений о доставках авторизуйтесь.
+  <a routerLink='login'>Вход</a>
+</p>
 <p>
 <div *ngFor="let delivery of deliveries$.deliveries.content">
 <ul >

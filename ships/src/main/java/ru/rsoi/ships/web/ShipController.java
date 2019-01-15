@@ -22,9 +22,10 @@ public class ShipController {
 
     @GetMapping("/{id}")
 
-    public ShipInfo ShipById(@PathVariable long id) {
-
-          return shipService.getById(id);
+    public ResponseEntity<ShipInfo> ShipById(@PathVariable long id,@RequestHeader("token") String jwt) {
+        if (shipService.parseJWT(jwt)){
+          return ResponseEntity.ok(shipService.getById(id));}
+          else return ResponseEntity.status(401).body(null);
     }
 
     @PostMapping("/token")
@@ -45,29 +46,38 @@ public class ShipController {
     }
 
     @GetMapping
-    public Page<ShipInfo> findAllShips(@RequestParam("page") Integer page,@RequestParam("size") Integer size) {
+    public ResponseEntity<Page<ShipInfo>> findAllShips(@RequestParam("page") Integer page,@RequestParam("size") Integer size,@RequestHeader("token") String jwt) {
+        if (shipService.parseJWT(jwt)){
         Pageable request = PageRequest.of(page,size);
-        return shipService.listAllByPage(request);
+        return ResponseEntity.ok(shipService.listAllByPage(request));}
+        else return ResponseEntity.status(401).body(null);
     }
 
     @DeleteMapping("/delete/{id}")
-    public void deleteShip(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteShip(@PathVariable Integer id,@RequestHeader("token") String jwt) {
+        if (shipService.parseJWT(jwt)){
         shipService.delete(id);
+        return ResponseEntity.ok().build();}
+        else return ResponseEntity.status(401).build();
     }
 
     @PostMapping("/createship")
-    public ResponseEntity<String> createShip(@RequestBody ShipInfo ship) {
-
+    public ResponseEntity<String> createShip(@RequestBody ShipInfo ship,@RequestHeader("token") String jwt) {
+        if (shipService.parseJWT(jwt)){
         try{shipService.createShip(ship);
         return ResponseEntity.ok("Ship created.");
         } catch (RuntimeException e){
-            return ResponseEntity.badRequest().body("Invalid data.");
+            return ResponseEntity.badRequest().body("Invalid data.");}
         }
+        else return ResponseEntity.status(401).body("Отказано в доступе.");
     }
 
     @PostMapping("/edit")
-    public void editShip(@RequestBody ShipInfo ship) {
+    public ResponseEntity<Void> editShip(@RequestBody ShipInfo ship,@RequestHeader("token") String jwt) {
+        if (shipService.parseJWT(jwt)){
         shipService.editShip(ship);
+        return ResponseEntity.ok().build();}
+        else return ResponseEntity.status(401).build();
     }
 
 

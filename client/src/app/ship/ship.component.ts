@@ -14,6 +14,7 @@ export class ShipComponent implements OnInit {
 
   ship$: Object;
   id: number;
+  enable:boolean;
 
   response: string = String('Confirm');
 
@@ -24,6 +25,7 @@ export class ShipComponent implements OnInit {
   ngOnInit() {
     this.service.getShip(this.id).subscribe(
       service => this.ship$ = service);
+    this.enable = localStorage.getItem('token') != null;
 
   }
 

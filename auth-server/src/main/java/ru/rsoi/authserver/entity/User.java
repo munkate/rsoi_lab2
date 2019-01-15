@@ -1,7 +1,6 @@
 package ru.rsoi.authserver.entity;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Entity
@@ -22,7 +21,7 @@ public class User {
     private String second_name;
 
     @Column(name = "username", length = 20)
-    private String userlogin;
+    private String login;
     @Column(name = "password", length = 20)
     private String password;
 
@@ -90,17 +89,17 @@ public class User {
         this.last_name = last_name;
         this.first_name = first_name;
         this.second_name = second_name;
-        this.userlogin = login;
+        this.login = login;
         this.password = password;
         this.authorities = authorities;
     }
 
     public String getLogin() {
-        return userlogin;
+        return login;
     }
 
     public void setLogin(String login) {
-        this.userlogin = login;
+        this.login = login;
     }
 
     public String getPassword() {

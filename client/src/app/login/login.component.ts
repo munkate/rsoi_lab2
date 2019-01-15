@@ -33,7 +33,8 @@ export class LoginComponent implements OnInit {
         /*this.cookieService.put('token', this.token);
         console.log(this.cookieService.get('token'));*/
         localStorage.setItem('token', this.token);
-        console.log(localStorage.getItem('token'))
+      //  this.router.navigate(['/users/1/deliveries?page=0&size=20']);
+        console.log(localStorage.getItem('token'));
       }, (err) => {
         console.log(err);
       });

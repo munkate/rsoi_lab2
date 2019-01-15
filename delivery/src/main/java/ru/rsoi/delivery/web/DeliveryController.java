@@ -7,7 +7,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.rsoi.delivery.model.DeliveryModel;
 import ru.rsoi.delivery.service.DeliveryService;
@@ -41,46 +40,61 @@ public class DeliveryController {
     }
 
     @GetMapping("/{id}")
-    public DeliveryModel DeliveryById(@PathVariable Integer id) {
-        return deliveryService.getDeliveryById(id);
+    public ResponseEntity<DeliveryModel> DeliveryById(@PathVariable Integer id,@RequestHeader("token") String jwt) {
+        if (deliveryService.parseJWT(jwt)){
+        return ResponseEntity.ok(Objects.requireNonNull(deliveryService.getDeliveryById(id)));}
+        else return ResponseEntity.status(401).body(null);
+
+
     }
 
     @GetMapping
-    public ResponseEntity<Page<DeliveryModel>> findAllDeliveries(@Param("page") Integer page, @Param("size") Integer size) {
+    public ResponseEntity<Page<DeliveryModel>> findAllDeliveries(@Param("page") Integer page, @Param("size") Integer size,@RequestHeader("token") String jwt) {
+        if (deliveryService.parseJWT(jwt)){
         Pageable request = PageRequest.of(page,size);
-        return ResponseEntity.ok(deliveryService.findAll(request));
+        return ResponseEntity.ok(deliveryService.findAll(request));}
+        else return ResponseEntity.status(401).body(null);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDelivery(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteDelivery(@PathVariable Integer id,@RequestHeader("token") String jwt) {
+        if (deliveryService.parseJWT(jwt)){
         deliveryService.deleteDeliveryByUid(id);
-       return ResponseEntity.ok().build();
+       return ResponseEntity.ok().build();}
+        else return ResponseEntity.status(401).build();
     }
 
     @PostMapping("/createdelivery")
-    public ResponseEntity<Void> createDelivery(@RequestBody DeliveryModel model) {
+    public ResponseEntity<Void> createDelivery(@RequestBody DeliveryModel model,@RequestHeader("token") String jwt) {
+        if (deliveryService.parseJWT(jwt)){
         deliveryService.createDelivery(model);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().build();}
+        else return ResponseEntity.status(401).build();
     }
 
     @PostMapping("/createdeliveryAgr")
-    public ResponseEntity<Void> createDeliveryAgr(@RequestBody LinkedHashMap<String,Object> model) throws ParseException {
+    public ResponseEntity<Void> createDeliveryAgr(@RequestBody LinkedHashMap<String,Object> model,@RequestHeader("token") String jwt) throws ParseException {
+        if (deliveryService.parseJWT(jwt)){
         DeliveryModel del = deliveryService.getModelFromHashMap(model);
         deliveryService.createDelivery(del);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().build();}
+        else return ResponseEntity.status(401).build();
     }
 
     @PatchMapping("/editdelivery")
-    public ResponseEntity<Void> editDelivery(@RequestBody LinkedHashMap<String,Object> model) throws ParseException {
+    public ResponseEntity<Void> editDelivery(@RequestBody LinkedHashMap<String,Object> model,@RequestHeader("token") String jwt) throws ParseException {
+        if (deliveryService.parseJWT(jwt)){
         DeliveryModel del = deliveryService.getModelFromHashMap(model);
 
         deliveryService.editDelivery(del);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().build();}
+        else return ResponseEntity.status(401).build();
     }
 
     @GetMapping("/users/{id}/deliveries")
     public ResponseEntity<Page<DeliveryModel>> findAllDeliveriesById(@PathVariable Integer id, @RequestParam(value = "page") Integer page,
+
                                                                      @RequestParam(value = "size", required = false) Integer size, @RequestHeader("token") String jwt) {
         Pageable request;
         if (page!=null&& size!=null) request = PageRequest.of(page,size);
@@ -90,7 +104,11 @@ public class DeliveryController {
     else return ResponseEntity.badRequest().body(null);
     }
     @GetMapping("/users/{id}/deliveries/{del_id}")
-    public DeliveryModel findUserDeliveryById(@PathVariable Integer del_id) {
-        return deliveryService.getDeliveryById(del_id);
+    public ResponseEntity<DeliveryModel> findUserDeliveryById(@PathVariable Integer del_id, @RequestHeader("token") String jwt) {
+        if (deliveryService.parseJWT(jwt)){
+        return ResponseEntity.ok(Objects.requireNonNull(deliveryService.getDeliveryById(del_id)));}
+        else return ResponseEntity.status(401).body(null);
+
+
     }
 }

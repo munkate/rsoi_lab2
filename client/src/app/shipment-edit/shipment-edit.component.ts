@@ -34,8 +34,8 @@ export class ShipmentEditComponent implements AfterViewInit, AfterViewChecked {
   constructor(private service: DataService, private route: ActivatedRoute,
               private router: Router, private formBuilder: FormBuilder) {
     this.shipmentForm = this.formBuilder.group({
-    'title' : ['', [Validators.pattern('[a-zA-Z]*')]],
-    'declare_value' : [null, [Validators.maxLength(10000)]],
+    'title' : ['', [Validators.required]],
+    'declare_value' : [null, [Validators.required]],
     'unit_id' : [null, [Validators.required]],
     'del_id' : [null, [Validators.required]],
     'uid': [null, [Validators.required]]

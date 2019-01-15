@@ -20,9 +20,11 @@ public interface UserService {
     void deleteUserById(@NonNull Integer id);
     @Nullable
     UserModel getUserByLogin(String login);
+/*
 
     String getAccessToken(String login, String password);
     void setTime(String login, long accessDate);
     boolean checkToken(String token);
+*/
 
 }

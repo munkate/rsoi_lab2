@@ -11,6 +11,7 @@ import {Observable} from 'rxjs';
 export class ShipsComponent implements OnInit {
 
   ships$: Object;
+  enable: boolean;
 
   constructor(private service: DataService) {
   }
@@ -18,6 +19,7 @@ export class ShipsComponent implements OnInit {
   ngOnInit() {
     this.service.getShips().subscribe(
       service => this.ships$ = service);
+    this.enable = localStorage.getItem('token') != null;
   }
 
 }

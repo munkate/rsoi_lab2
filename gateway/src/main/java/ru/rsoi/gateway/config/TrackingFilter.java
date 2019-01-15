@@ -11,6 +11,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import ru.rsoi.gateway.client.DeliveryFullInformation;
+import ru.rsoi.gateway.client.DeliveryFullInformationImpl;
 import ru.rsoi.gateway.response.ResponsePageImpl;
 import ru.rsoi.models.DeliveryModel;
 
@@ -24,31 +27,6 @@ import java.util.logging.Logger;
 
 @WebFilter("/*")
 public class TrackingFilter extends ZuulFilter {
-
-   /* public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
-        HttpSession session = request.getSession(false);
-
-        String loggedInUser = "Unregistered user";
-
-        //assuming you have a session attribute named user with the username
-        if(session != null && session.getAttribute("user") != null) {
-            loggedInUser = (String) session.getAttribute("user");
-        }
-
-        Date accessedDate = new Date();
-        filterConfig.getServletContext().log(
-                String.format("%s accessed context %s on %tF %tT",
-                        loggedInUser, request.getRequestURI() ,
-                        accessedDate, accessedDate)
-        );
-        System.out.print(String.format("%s accessed context %s on %tF %tT",
-                loggedInUser, request.getRequestURI() ,
-                accessedDate, accessedDate));
-
-        filterChain.doFilter(servletRequest, servletResponse);
-    }*/
-
 
     @Override
     public String filterType() {
@@ -70,8 +48,8 @@ public class TrackingFilter extends ZuulFilter {
         RequestContext ctx = RequestContext.getCurrentContext();
 
         long accessedDate = System.currentTimeMillis();
-        if (ctx.getRequest().getHeader("token")!=null)
-        { String login = ctx.getRequest().getHeader("token");
+        if (ctx.getRequest().getHeader("usertoken")!=null)
+        { String login = ctx.getRequest().getHeader("usertoken");
             try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpGet httpGet = new HttpGet("http://localhost:8080/setTime?token="+login+"&date="+accessedDate);
             httpGet.addHeader("token", login);

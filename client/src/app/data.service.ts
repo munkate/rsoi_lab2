@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Ship} from './ship/ship';
 import {map, publish, refCount} from 'rxjs/operators';
 import {Observable} from 'rxjs';
@@ -10,6 +10,8 @@ import {Observable} from 'rxjs';
 export class DataService {
 
   apiURL = 'http://localhost:8085/api';
+  token = localStorage.getItem('token');
+  headerName = 'usertoken';
 
   constructor(private http: HttpClient) { }
   login(login, password) {
@@ -23,47 +25,60 @@ export class DataService {
     return this.http.get(`${this.apiURL}/ships?page=0&size=20`);
   }
   createShip(ship) {
-    return this.http.post(`${this.apiURL}/ships/createship`, ship);
+    if (localStorage.getItem('token') != null) {
+    return this.http.post(`${this.apiURL}/ships/ship`, ship, {headers: {'usertoken': localStorage.getItem('token')}}); } else { return this.http.post(`${this.apiURL}/ships/ship`, ship); }
   }
 
   updateShip(ship) {
-    return this.http.post(`${this.apiURL}/ships/edit`, ship);
+    if (localStorage.getItem('token') != null) {
+    return this.http.post(`${this.apiURL}/edit/ship`, ship, {headers: {'usertoken': localStorage.getItem('token')}}); } else { return this.http.post(`${this.apiURL}/edit/ship`, ship); }
 
   }
 
   deleteShip(id) {
-    return this.http.delete(`${this.apiURL}/ships/delete/${id}`);
+    if (localStorage.getItem('token') != null) {
+    return this.http.delete(`${this.apiURL}/ships/delete/${id}`, {headers: {'usertoken': localStorage.getItem('token')}}); } else { return this.http.delete(`${this.apiURL}/ships/delete/${id}`); }
   }
 
   getShipments() {
-    return this.http.get(this.apiURL + 'shipments');
+    if (localStorage.getItem('token') != null) {
+    return this.http.get(this.apiURL + 'shipments', {headers: {'usertoken': localStorage.getItem('token')}}); } else { return this.http.get(this.apiURL + 'shipments'); }
   }
   getShipment(id) {
-    return this.http.get(`${this.apiURL}/shipments/${id}`);
+    if (localStorage.getItem('token') != null) {
+    return this.http.get(`${this.apiURL}/shipments/${id}`, {headers: {'usertoken': localStorage.getItem('token')}}); } else { return this.http.get(`${this.apiURL}/shipments/${id}`); }
   }
   getDelivery(id) {
-    return this.http.get(`${this.apiURL}/users/1/deliveries/${id}`);
+    if (localStorage.getItem('token') != null) {
+    return this.http.get(`${this.apiURL}/users/1/deliveries/${id}`, {headers: {'usertoken': localStorage.getItem('token')}}); } else { return this.http.get(`${this.apiURL}/users/1/deliveries/${id}`); }
   }
   getDeliveries(user_id) {
-    return this.http.get(`${this.apiURL}/users/${user_id}/deliveries?page=0&size=20`);
+    if (localStorage.getItem('token') != null) {
+    return this.http.get(`${this.apiURL}/users/${user_id}/deliveries?page=0&size=20`, {headers: {'usertoken': localStorage.getItem('token')}}); } else { return this.http.get(`${this.apiURL}/users/${user_id}/deliveries?page=0&size=20`); }
   }
   deleteDelivery(user_id, id) {
-    return this.http.delete(`${this.apiURL}/delete/users/${user_id}/deliveries/${id}`);
+    if (localStorage.getItem('token') != null) {
+    return this.http.delete(`${this.apiURL}/delete/users/${user_id}/deliveries/${id}`, {headers: {'usertoken': this.token}}); } else { return this.http.delete(`${this.apiURL}/delete/users/${user_id}/deliveries/${id}`); }
   }
   createDelivery(user_id, delivery) {
-    return this.http.post(`${this.apiURL}/users/1/delivery`, delivery);
+    if (localStorage.getItem('token') != null) {
+    return this.http.post(`${this.apiURL}/users/1/delivery`, delivery, {headers: {'usertoken': this.token}}); } else { return this.http.post(`${this.apiURL}/users/1/delivery`, delivery); }
   }
   updateDelivery(delivery) {
-    return this.http.patch(`${this.apiURL}/deliveries/editdelivery`, delivery);
+    if (localStorage.getItem('token') != null) {
+    return this.http.patch(`${this.apiURL}/deliveries/editdelivery`, delivery, {headers: {'usertoken': this.token}}); } else { return this.http.patch(`${this.apiURL}/deliveries/editdelivery`, delivery); }
   }
   createShipment(shipment) {
-    return this.http.post(`${this.apiURL}/shipments/create`, shipment);
+    if (localStorage.getItem('token') != null) {
+    return this.http.post(`${this.apiURL}/shipments/create`, shipment, {headers: {'usertoken': this.token}}); } else { return this.http.post(`${this.apiURL}/shipments/create`, shipment); }
   }
   updateShipment(shipment) {
-    return this.http.post(`${this.apiURL}/shipments/edit`, shipment);
+    if (localStorage.getItem('token') != null) {
+    return this.http.post(`${this.apiURL}/shipments/edit`, shipment, {headers: {'usertoken': this.token}}); } else { return this.http.post(`${this.apiURL}/shipments/edit`, shipment); }
   }
   deleteShipment(id) {
-    return this.http.delete(`${this.apiURL}/shipments/delete/${id}`);
+    if (localStorage.getItem('token') != null) {
+    return this.http.delete(`${this.apiURL}/shipments/delete/${id}`, {headers: {'usertoken': this.token}}); } else { return this.http.delete(`${this.apiURL}/shipments/delete/${id}`); }
   }
 
 }

@@ -31,7 +31,7 @@ public class ShipServiceImpl implements ShipService {
     private static final String RESOURCE_SECRET = "ships";
     private String CLIENT_ID = "gateway";
     private String CLIENT_SECRET = "gateway";
-    private long EXPIRATION = 1000000*60*30;
+    private long EXPIRATION = 1000*60*30;
 
     @Autowired
     private ShipRepository shipRepository;

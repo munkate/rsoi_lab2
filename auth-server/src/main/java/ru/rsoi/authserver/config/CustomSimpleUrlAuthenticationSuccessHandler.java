@@ -28,7 +28,7 @@ public class CustomSimpleUrlAuthenticationSuccessHandler implements Authenticati
             throws IOException {
 
         handle(request, response, authentication);
-        clearAuthenticationAttributes(request);
+       // clearAuthenticationAttributes(request);
     }
 
     protected void handle(HttpServletRequest request,

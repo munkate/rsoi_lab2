@@ -7,18 +7,18 @@
 
 <ul>
   <li>
-    Название: {{ship$?.sh_title}}
+    Название: {{ship$?.ship.sh_title}}
 
     <ul>
-      <li>Капитан: {{ship$?.skipper}}</li>
-      <li>Год строительства: {{ship$?.year}}</li>
-      <li>Тип корабля: {{ship$?.type_id}}</li>
-      <li>Водоизмещение, л.: {{ship$?.capacity}}</li>
+      <li>Капитан: {{ship$?.ship.skipper}}</li>
+      <li>Год строительства: {{ship$?.ship.year}}</li>
+      <li>Тип корабля: {{ship$?.ship.type_id}}</li>
+      <li>Водоизмещение, л.: {{ship$?.ship.capacity}}</li>
     </ul>
 
-    <button mat-raised-button (click)="delete(ship$)">Удалить</button>
+    <button [disabled]="!enable" mat-raised-button (click)="delete(ship$.ship)">Удалить</button>
     <button mat-raised-button (click)="back()">Назад</button>
-    <button mat-raised-button routerLink="/edit/{{ship$?.uid}}">Редактировать</button>
+    <button [disabled]="!enable" mat-raised-button routerLink="/edit/{{ship$?.ship.uid}}">Редактировать</button>
   </li>
 </ul>
 
