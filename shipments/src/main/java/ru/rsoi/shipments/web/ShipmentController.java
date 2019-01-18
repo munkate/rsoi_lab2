@@ -41,10 +41,9 @@ public class ShipmentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ShipmentInfo> ShipmentById(@PathVariable Integer id,@RequestHeader("token") String jwt) {
-        if (shipmentService.parseJWT(jwt)){
-        return ResponseEntity.ok(shipmentService.getById(id));}
-        else return ResponseEntity.status(401).body(null);
+    public ResponseEntity<ShipmentInfo> ShipmentById(@PathVariable Integer id,@RequestHeader(value = "token", required = false) String jwt) {
+
+        return ResponseEntity.ok(shipmentService.getById(id));
     }
 
     @GetMapping
@@ -56,7 +55,7 @@ public class ShipmentController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Void> createShipment(@RequestBody ShipmentInfo shipment,@RequestHeader("token") String jwt) {
+    public ResponseEntity<Void> createShipment(@RequestBody ShipmentInfo shipment,@RequestHeader(value = "token", required = false) String jwt) {
         if (shipmentService.parseJWT(jwt)){
         shipmentService.createShipment(shipment);
             return ResponseEntity.ok().build();}
@@ -68,25 +67,23 @@ public class ShipmentController {
     {
         if (shipmentService.parseJWT(jwt)){
        // List<ShipmentInfo> new_shipment = shipmentService.getModelFromHashMap(shipment);
-        shipmentService.createShipments(shipment);
-            return ResponseEntity.ok().build();}
+        if(shipmentService.createShipments(shipment)){
+             return ResponseEntity.ok().build();}
+        else return ResponseEntity.status(400).build();
+        }
         else return ResponseEntity.status(401).build();
     }
 
     @PostMapping("/edit")
-    public ResponseEntity<Void> editShipment(@RequestBody ShipmentInfo shipment,@RequestHeader("token") String jwt) {
-        if (shipmentService.parseJWT(jwt)){
+    public ResponseEntity<Void> editShipment(@RequestBody ShipmentInfo shipment,@RequestHeader(value = "token", required = false) String jwt) {
             shipmentService.editShipment(shipment);
-            return ResponseEntity.ok().build();}
-        else return ResponseEntity.status(401).build();
+            return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteShipment(@PathVariable long id,@RequestHeader("token") String jwt) {
-        if (shipmentService.parseJWT(jwt)){
+    public ResponseEntity<Void> deleteShipment(@PathVariable long id,@RequestHeader(value = "token", required = false) String jwt) {
         shipmentService.delete(id);
-        return ResponseEntity.ok().build();}
-        else return ResponseEntity.status(401).build();
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/deliveries/{del_id}")

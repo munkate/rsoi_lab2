@@ -30,10 +30,7 @@ export class LoginComponent implements OnInit {
     this.service.login(form['login'], form['password'])
       .subscribe(res => {
         this.token = res['token'];
-        /*this.cookieService.put('token', this.token);
-        console.log(this.cookieService.get('token'));*/
         localStorage.setItem('token', this.token);
-      //  this.router.navigate(['/users/1/deliveries?page=0&size=20']);
         console.log(localStorage.getItem('token'));
       }, (err) => {
         console.log(err);

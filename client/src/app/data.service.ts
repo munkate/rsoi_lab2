@@ -62,23 +62,23 @@ export class DataService {
   }
   createDelivery(user_id, delivery) {
     if (localStorage.getItem('token') != null) {
-    return this.http.post(`${this.apiURL}/users/1/delivery`, delivery, {headers: {'usertoken': this.token}}); } else { return this.http.post(`${this.apiURL}/users/1/delivery`, delivery); }
+    return this.http.post(`${this.apiURL}/users/1/delivery`, delivery, {headers: {'usertoken': localStorage.getItem('token')}}); } else { return this.http.post(`${this.apiURL}/users/1/delivery`, delivery); }
   }
   updateDelivery(delivery) {
     if (localStorage.getItem('token') != null) {
-    return this.http.patch(`${this.apiURL}/deliveries/editdelivery`, delivery, {headers: {'usertoken': this.token}}); } else { return this.http.patch(`${this.apiURL}/deliveries/editdelivery`, delivery); }
+    return this.http.patch(`${this.apiURL}/deliveries/editdelivery`, delivery, {headers: {'usertoken': localStorage.getItem('token')}}); } else { return this.http.patch(`${this.apiURL}/deliveries/editdelivery`, delivery); }
   }
   createShipment(shipment) {
     if (localStorage.getItem('token') != null) {
-    return this.http.post(`${this.apiURL}/shipments/create`, shipment, {headers: {'usertoken': this.token}}); } else { return this.http.post(`${this.apiURL}/shipments/create`, shipment); }
+    return this.http.post(`${this.apiURL}/shipments/create`, shipment, {headers: {'usertoken': localStorage.getItem('token')}}); } else { return this.http.post(`${this.apiURL}/shipments/create`, shipment); }
   }
   updateShipment(shipment) {
     if (localStorage.getItem('token') != null) {
-    return this.http.post(`${this.apiURL}/shipments/edit`, shipment, {headers: {'usertoken': this.token}}); } else { return this.http.post(`${this.apiURL}/shipments/edit`, shipment); }
+    return this.http.post(`${this.apiURL}/shipments/edit`, shipment, {headers: {'usertoken': localStorage.getItem('token')}}); } else { return this.http.post(`${this.apiURL}/shipments/edit`, shipment); }
   }
   deleteShipment(id) {
     if (localStorage.getItem('token') != null) {
-    return this.http.delete(`${this.apiURL}/shipments/delete/${id}`, {headers: {'usertoken': this.token}}); } else { return this.http.delete(`${this.apiURL}/shipments/delete/${id}`); }
+    return this.http.delete(`${this.apiURL}/shipments/delete/${id}`, {headers: {'usertoken': localStorage.getItem('token')}}); } else { return this.http.delete(`${this.apiURL}/shipments/delete/${id}`); }
   }
 
 }

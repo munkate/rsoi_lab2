@@ -82,10 +82,15 @@ public class ShipServiceImpl implements ShipService {
 
     @Override
     public void editShip(ShipInfo shipInfo) {
-       try{ Ship ship = getEntity(shipInfo);
-        BeanUtils.copyProperties(shipInfo,ship);
-        shipRepository.save(ship);}
-        catch (RuntimeException e){
+       try{
+           Ship ship = null;
+           try {ship = getEntity(shipInfo);}
+           catch ( NullPointerException ignored){
+
+           }
+            BeanUtils.copyProperties(shipInfo,ship);
+            shipRepository.save(ship);}
+            catch (RuntimeException e){
             LOGGER.error("Failed update ship uid={}",shipInfo.getUid());
             throw new RuntimeException("DAO failed", e);
         }

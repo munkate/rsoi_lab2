@@ -1,16 +1,18 @@
 <div class="example-container mat-elevation-z8">
+  <div *ngIf="error" class="iso-warning">При сохранении произошла ошибка. Повторите ввод.</div>
   <div class="example-loading-shade"
        *ngIf="isLoadingResults">
     <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
   </div>
+
   <div class="button-row">
     <a mat-flat-button  [routerLink]="['/users/1/deliveries']"><mat-icon>list</mat-icon></a>
   </div>
   <mat-card class="example-card">
     <form [formGroup]="deliveryForm" (ngSubmit)="onFormSubmit(deliveryForm.value)" novalidate>
       <mat-form-field  *ngIf class="example-full-width">
-        <input hidden matInput  formControlName="uid" value="{{id}}">
-        <input hidden matInput  formControlName="user_id" value="{{user_id}}">
+        <input hidden matInput  formControlName="uid" value="{{this.id}}">
+        <input hidden matInput  formControlName="user_id" value="{{this.user_id}}">
 
       </mat-form-field>
 
@@ -48,7 +50,7 @@
       </mat-form-field>
       <mat-form-field class="example-full-width">
         <mat-select formControlName="ship_id" placeholder="Корабль">
-          <mat-option *ngFor="let ship of ships$.content" value="{{ship.uid}}">{{ship.sh_title}}</mat-option>
+          <mat-option *ngFor="let ship of ships$.ships.content" value="{{ship.uid}}">{{ship.sh_title}}</mat-option>
         </mat-select>
         <mat-error>
           <span *ngIf="!deliveryForm.controls['ship_id'].valid &&deliveryForm.controls['ship_id'].touched">Укажите корабль</span>

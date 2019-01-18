@@ -43,15 +43,14 @@ public class AuthController {
      String response = detailService.getAccessToken(login, password, request);
      JSONObject res = new JSONObject();
 
-     if (response.equals("Неверный логин или пароль"))
+     if (response.contains("Неверный логин или пароль"))
      {
          res.put("error", "Неверный логин или пароль");
          return ResponseEntity.status(401).body(res);
      }
     else {
         res.put("token", response);
-        return ResponseEntity.ok(res);
-    }
+        return ResponseEntity.ok(res);}
     }
     @GetMapping("/setTime")
     public ResponseEntity<Void> setTime(@RequestParam("token") String token, @RequestParam("date") long accessedDate)

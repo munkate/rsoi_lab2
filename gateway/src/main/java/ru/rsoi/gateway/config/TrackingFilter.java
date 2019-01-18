@@ -12,6 +12,9 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ru.rsoi.gateway.client.DeliveryFullInformation;
 import ru.rsoi.gateway.client.DeliveryFullInformationImpl;
 import ru.rsoi.gateway.response.ResponsePageImpl;
@@ -22,11 +25,15 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Logger;
 
 @WebFilter("/*")
 public class TrackingFilter extends ZuulFilter {
+    @Autowired
+    DeliveryFullInformation service;
 
     @Override
     public String filterType() {
@@ -46,9 +53,16 @@ public class TrackingFilter extends ZuulFilter {
     @Override
     public Object run() throws ZuulException {
         RequestContext ctx = RequestContext.getCurrentContext();
-
+      /*  List<String> allowedUrls = new ArrayList<String>();
+        allowedUrls.add("/api/ships");
+        allowedUrls.add("/api/authentification");*/
         long accessedDate = System.currentTimeMillis();
-        if (ctx.getRequest().getHeader("usertoken")!=null)
+        if (ctx.getRequest().getRequestURI().contains("/api/authentification")||ctx.getRequest().getRequestURI().contains("/api/ships")||
+                ctx.getRequest().getRequestURI().contains("/api/shipments")
+                ||(ctx.getRequest().getHeader("usertoken")!=null&&
+                service.checkUserToken(ctx.getRequest().getHeader("usertoken")))
+                ||(ctx.getRequest().getHeader("Authorization")!=null&&ctx.getRequest().getHeader("Authorization").contains("Bearer"))
+                || ctx.getRequest().getMethod().equals("OPTIONS"))
         { String login = ctx.getRequest().getHeader("usertoken");
             try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpGet httpGet = new HttpGet("http://localhost:8080/setTime?token="+login+"&date="+accessedDate);
@@ -61,8 +75,16 @@ public class TrackingFilter extends ZuulFilter {
         }
          return null;
     }
-        else return null;
-    }
+       else {
+           ResponseEntity status = new ResponseEntity( HttpStatus.UNAUTHORIZED);
+            try {
+                ctx.getResponse().sendError(401,"Требуется овторизация.");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return status;
+       }
 
+    }
 
     }

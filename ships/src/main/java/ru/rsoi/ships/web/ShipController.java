@@ -75,9 +75,12 @@ public class ShipController {
     @PostMapping("/edit")
     public ResponseEntity<Void> editShip(@RequestBody ShipInfo ship,@RequestHeader("token") String jwt) {
         if (shipService.parseJWT(jwt)){
-        shipService.editShip(ship);
-        return ResponseEntity.ok().build();}
-        else return ResponseEntity.status(401).build();
+       try{ shipService.editShip(ship);
+           return ResponseEntity.ok().build();}
+       catch (RuntimeException e){
+           return ResponseEntity.badRequest().build();
+       }}
+      else return ResponseEntity.status(401).build();
     }
 
 

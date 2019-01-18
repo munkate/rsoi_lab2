@@ -32,6 +32,7 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeliveryFullInformationImpl.class);
     private Jedis jedis = new Jedis("127.0.0.1",6379);
+
     private boolean checkToken(String checkUrl, String jwt) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost checkRequest = new HttpPost(checkUrl);
@@ -57,8 +58,7 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
                 httpPost.addHeader("clientSecret","gateway");
                 try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
                     String res = EntityUtils.toString(response.getEntity());
-                    System.out.print(res);
-                    jedis.set(service+":"+res,res);
+                    jedis.append(service+":"+res,res);
                     return res;
                 }
             }
@@ -91,6 +91,25 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
         return false;
     }
 
+    @Override
+    public void createShipment(JSONObject data, String token) {
+        if (checkUserToken(token)||token==null) {
+            try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+                String shipmentToken = getToken("shipments","http://localhost:8082/shipments/token",
+                        "http://localhost:8082/shipments/checktoken");
+                HttpPost httpPost = new HttpPost("http://localhost:8082/shipments/create");
+                httpPost.addHeader("token", shipmentToken);
+                httpPost.setEntity(new StringEntity(JSONObject.toJSONString((Map<String, ?>) data),
+                        ContentType.APPLICATION_JSON));
+                try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {
+                    LOGGER.info("Shipment created.");
+                }
+            } catch (IOException e) {
+                LOGGER.error("Exception caught.", e);
+            }
+        }
+    }
+
 
     @Override
     public void editDelivery(JSONObject delivery, String userToken) {
@@ -98,10 +117,12 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
             return;
         }
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            String token = getToken("deliveries","http://localhost:8083/deliveries/token", "http://localhost:8083/deliveries/checktoken");
+            String token = getToken("deliveries","http://localhost:8083/deliveries/token",
+                    "http://localhost:8083/deliveries/checktoken");
             HttpPost httpPost = new HttpPost("http://localhost:8083/deliveries/editdelivery");
             httpPost.addHeader("token", token);
-            httpPost.setEntity(new StringEntity(JSONObject.toJSONString((Map<String, ?>) delivery), ContentType.APPLICATION_JSON));
+            httpPost.setEntity(new StringEntity(JSONObject.toJSONString((Map<String, ?>) delivery),
+                    ContentType.APPLICATION_JSON));
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {
                 LOGGER.info("Delivery updated");
             }
@@ -117,12 +138,15 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
         ResponsePageImpl<ShipInfo> ships_model = null;
         ObjectMapper mapper = new ObjectMapper();
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            String token = getToken("ships","http://localhost:8082/ships/token", "http://localhost:8082/ships/checktoken");
-            HttpGet httpGet = new HttpGet("http://localhost:8082/ships?page=" + pageable.getPageNumber() + "&size="+pageable.getPageSize());
+            String token = getToken("ships","http://localhost:8082/ships/token",
+                    "http://localhost:8082/ships/checktoken");
+            HttpGet httpGet = new HttpGet("http://localhost:8082/ships?page=" + pageable.getPageNumber() +
+                    "&size="+pageable.getPageSize());
             httpGet.addHeader("token", token);
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpGet)) {
 
-                ships_model =mapper.readValue(EntityUtils.toString(httpResponse.getEntity()), new TypeReference<ResponsePageImpl<ShipInfo>>(){});
+                ships_model =mapper.readValue(EntityUtils.toString(httpResponse.getEntity()),
+                        new TypeReference<ResponsePageImpl<ShipInfo>>(){});
             }
         } catch (IOException e) {
             LOGGER.error("Exception caught.", e);
@@ -137,7 +161,8 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
         ShipInfo ship_model = null;
         ObjectMapper mapper = new ObjectMapper();
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            String token = getToken("ships","http://localhost:8082/ships/token", "http://localhost:8082/ships/checktoken");
+            String token = getToken("ships","http://localhost:8082/ships/token",
+                    "http://localhost:8082/ships/checktoken");
             HttpGet httpGet = new HttpGet("http://localhost:8082/ships/" + id + "");
             httpGet.addHeader("token", token);
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpGet)) {
@@ -155,10 +180,12 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
     public void editShip(JSONObject ship, String userToken) {
         if (checkUserToken(userToken)||userToken==null) {
             try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-                String token = getToken("ships","http://localhost:8082/ships/token", "http://localhost:8082/ships/checktoken");
+                String token = getToken("ships","http://localhost:8082/ships/token",
+                        "http://localhost:8082/ships/checktoken");
                 HttpPost httpPost = new HttpPost("http://localhost:8082/ships/edit");
                 httpPost.addHeader("token", token);
-                httpPost.setEntity(new StringEntity(JSONObject.toJSONString((Map<String, ?>) ship), ContentType.APPLICATION_JSON));
+                httpPost.setEntity(new StringEntity(JSONObject.toJSONString((Map<String, ?>) ship),
+                        ContentType.APPLICATION_JSON));
                 try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {
                     LOGGER.info("Ship's data updated.");
                 }
@@ -172,10 +199,12 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
     public void createShip(JSONObject ship, String userToken) {
         if (checkUserToken(userToken)||userToken==null) {
             try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-                String token = getToken("ships","http://localhost:8082/ships/token", "http://localhost:8082/ships/checktoken");
+                String token = getToken("ships","http://localhost:8082/ships/token",
+                        "http://localhost:8082/ships/checktoken");
                 HttpPost httpPost = new HttpPost("http://localhost:8082/ships/createship");
                 httpPost.addHeader("token", token);
-                httpPost.setEntity(new StringEntity(JSONObject.toJSONString((Map<String, ?>) ship), ContentType.APPLICATION_JSON));
+                httpPost.setEntity(new StringEntity(JSONObject.toJSONString((Map<String, ?>) ship),
+                        ContentType.APPLICATION_JSON));
                 try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {
                     LOGGER.info("Ship created.");
                 }
@@ -189,7 +218,8 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
     public void deleteShip(Integer id, String token) {
        /* if (checkUserToken(token)||token==null) {*/
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            String mictoken = getToken("ships","http://localhost:8082/ships/token", "http://localhost:8082/ships/checktoken");
+            String mictoken = getToken("ships","http://localhost:8082/ships/token",
+                    "http://localhost:8082/ships/checktoken");
             HttpDelete httpDelete = new HttpDelete("http://localhost:8082/ships/delete/" + id + "");
             httpDelete.addHeader("token", mictoken);
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpDelete)) {
@@ -211,12 +241,15 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
             ResponsePageImpl<DeliveryModel> del_model = null;
             ObjectMapper mapper = new ObjectMapper();
             try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            String mictoken = getToken("deliveries","http://localhost:8083/deliveries/token", "http://localhost:8083/deliveries/checktoken");
+            String mictoken = getToken("deliveries","http://localhost:8083/deliveries/token",
+                    "http://localhost:8083/deliveries/checktoken");
 
-                HttpGet httpGet = new HttpGet("http://localhost:8083/deliveries/users/"+user_id+"/deliveries?page="+pageable.getPageNumber()+"&size="+pageable.getPageSize());
+                HttpGet httpGet = new HttpGet("http://localhost:8083/deliveries/users/"+user_id+"/deliveries?page="
+                        +pageable.getPageNumber()+"&size="+pageable.getPageSize());
                 httpGet.addHeader("token", mictoken);
                 try (CloseableHttpResponse httpResponse = httpClient.execute(httpGet)) {
-                    del_model = mapper.readValue(EntityUtils.toString(httpResponse.getEntity()), new TypeReference<ResponsePageImpl<DeliveryModel>>(){});
+                    del_model = mapper.readValue(EntityUtils.toString(httpResponse.getEntity()),
+                            new TypeReference<ResponsePageImpl<DeliveryModel>>(){});
                 }
             } catch (IOException e) {
                 LOGGER.error("Exception caught.", e);
@@ -236,32 +269,28 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
         List<ShipmentInfo> shipment_model=null;
         ObjectMapper mapper = new ObjectMapper();
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            String token = getToken("deliveries","http://localhost:8083/deliveries/token", "http://localhost:8083/deliveries/checktoken");
+            String token = getToken("deliveries","http://localhost:8083/deliveries/token",
+                    "http://localhost:8083/deliveries/checktoken");
             HttpGet httpGet = new HttpGet("http://localhost:8083/deliveries/" + del_id + "");
             httpGet.addHeader("token", token);
             try (CloseableHttpResponse httpResponse = httpClient.execute(httpGet)) {
                 del_model = mapper.readValue(EntityUtils.toString(httpResponse.getEntity()), DeliveryModel.class);
             }
-        } catch (IOException e) {
-            LOGGER.error("Exception caught.", e);
-        }
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            String token = getToken("ships","http://localhost:8082/ships/token", "http://localhost:8082/ships/checktoken");
-            HttpGet httpGet = new HttpGet("http://localhost:8082/ships/" + del_model.getShip_id() + "");
-            httpGet.addHeader("token", token);
-            try (CloseableHttpResponse httpResponse = httpClient.execute(httpGet)) {
+            String shipstoken = getToken("ships","http://localhost:8082/ships/token",
+                    "http://localhost:8082/ships/checktoken");
+            HttpGet shipsGet = new HttpGet("http://localhost:8082/ships/" + del_model.getShip_id() + "");
+            shipsGet.addHeader("token", shipstoken);
+            try (CloseableHttpResponse httpResponse = httpClient.execute(shipsGet)) {
 
                 ship_model = mapper.readValue(EntityUtils.toString(httpResponse.getEntity()), ShipInfo.class);
             }
-        } catch (IOException e) {
-            LOGGER.error("Exception caught.", e);
-        }
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            String token = getToken("shipments","http://localhost:8081/shipments/token", "http://localhost:8081/shipments/checktoken");
-            HttpGet httpGet = new HttpGet("http://localhost:8081/shipments/deliveries/" + del_id + "");
-            httpGet.addHeader("token", token);
-            try (CloseableHttpResponse httpResponse = httpClient.execute(httpGet)) {
-                shipment_model = mapper.readValue(EntityUtils.toString(httpResponse.getEntity()), new TypeReference<List<ShipmentInfo>>() {});
+            String shipmentstoken = getToken("shipments","http://localhost:8081/shipments/token",
+                    "http://localhost:8081/shipments/checktoken");
+            HttpGet shipmentsGet = new HttpGet("http://localhost:8081/shipments/deliveries/" + del_id + "");
+            shipmentsGet.addHeader("token", shipmentstoken);
+            try (CloseableHttpResponse httpResponse = httpClient.execute(shipmentsGet)) {
+                shipment_model = mapper.readValue(EntityUtils.toString(httpResponse.getEntity()),
+                        new TypeReference<List<ShipmentInfo>>() {});
             }
         } catch (IOException e) {
             LOGGER.error("Exception caught.", e);
@@ -279,21 +308,19 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
     public void deleteDelivery(Integer del_id, String usertoken) {
         if (checkUserToken(usertoken)||usertoken==null) {
             try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-                String token = getToken("shipments", "http://localhost:8081/shipments/token", "http://localhost:8081/shipments/checktoken");
+                String token = getToken("shipments", "http://localhost:8081/shipments/token",
+                        "http://localhost:8081/shipments/checktoken");
                 HttpDelete httpDelete = new HttpDelete("http://localhost:8081/shipments/deleteAll/" + del_id + "");
                 httpDelete.addHeader("token", token);
                 try (CloseableHttpResponse httpResponse = httpClient.execute(httpDelete)) {
                     LOGGER.info("All shipments with del_id=" + del_id + " deleted.");
                 }
-            } catch (IOException e) {
-                LOGGER.error("Exception caught.", e);
-            }
 
-            try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-                String token = getToken("deliveries", "http://localhost:8083/deliveries/token", "http://localhost:8083/deliveries/checktoken");
-                HttpDelete httpDelete = new HttpDelete("http://localhost:8083/deliveries/" + del_id + "");
-                httpDelete.addHeader("token", token);
-                try (CloseableHttpResponse httpResponse = httpClient.execute(httpDelete)) {
+                String deltoken = getToken("deliveries", "http://localhost:8083/deliveries/token",
+                        "http://localhost:8083/deliveries/checktoken");
+                HttpDelete delDelete = new HttpDelete("http://localhost:8083/deliveries/" + del_id + "");
+                delDelete.addHeader("token", deltoken);
+                try (CloseableHttpResponse httpResponse = httpClient.execute(delDelete)) {
                     LOGGER.info("Delivery with id=" + del_id + " deleted.");
                 }
             } catch (IOException e) {
@@ -303,33 +330,62 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
 
     }
 
-    @Override
-    public void createDelivery(JSONObject data, String userToken) {
-        if (checkUserToken(userToken)||userToken==null) {
-            try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-                String token = getToken("deliveries", "http://localhost:8083/deliveries/token", "http://localhost:8083/deliveries/checktoken");
-                HttpPost httpPost = new HttpPost("http://localhost:8083/deliveries/createdeliveryAgr");
-                httpPost.addHeader("token", token);
-                httpPost.setEntity(new StringEntity(JSONObject.toJSONString((Map<String, ?>) data.get("delivery")), ContentType.APPLICATION_JSON));
-                try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {
-                    LOGGER.info("Delivery created.");
-                }
-            } catch (IOException e) {
-                LOGGER.error("Exception caught.", e);
-            }
-            try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-                String token = getToken("shipments", "http://localhost:8081/shipments/token", "http://localhost:8081/shipments/checktoken");
-                HttpPost httpPost = new HttpPost("http://localhost:8081/shipments/createAgr");
-                httpPost.addHeader("token", token);
-                httpPost.setEntity(new StringEntity(JSONArray.toJSONString((List<? extends Object>) data.get("shipments")), ContentType.APPLICATION_JSON));
-                try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {
-                    LOGGER.info("Shipment created.");
-                }
-            } catch (IOException e) {
-                LOGGER.error("Exception caught.", e);
-            }
-        }
+    private long createOnlyDel(JSONObject data, String deliveryToken)
+    {
 
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpPost httpPost = new HttpPost("http://localhost:8083/deliveries/createdeliveryAgr");
+            httpPost.addHeader("token", deliveryToken);
+            httpPost.setEntity(new StringEntity(JSONObject.toJSONString((Map<String, ?>) data.get("delivery")),
+                    ContentType.APPLICATION_JSON));
+            try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {
+                LOGGER.info("Delivery created.");
+                return Long.parseLong(EntityUtils.toString(httpResponse.getEntity()));
+
+            }
+        } catch (IOException e) {
+            LOGGER.error("Exception caught.", e);
+            return 0;
+        }
+    }
+
+    @Override
+    public long createDelivery(JSONObject data, String userToken) {
+        long del_id=0;
+        if (checkUserToken(userToken)||userToken==null) {
+            String deliveryToken = getToken("deliveries", "http://localhost:8083/deliveries/token",
+                    "http://localhost:8083/deliveries/checktoken");
+            del_id=createOnlyDel(data, deliveryToken);
+
+            if (del_id!=0){
+                try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+                String shipmentToken = getToken("shipments", "http://localhost:8081/shipments/token",
+                        "http://localhost:8081/shipments/checktoken");
+                HttpPost httpPost = new HttpPost("http://localhost:8081/shipments/createAgr");
+                httpPost.addHeader("token", shipmentToken);
+                httpPost.setEntity(new StringEntity(JSONArray.toJSONString((List<? extends Object>) data.get("shipments")),
+                        ContentType.APPLICATION_JSON));
+
+                try (CloseableHttpResponse httpResponse = httpClient.execute(httpPost)) {
+                  if (httpResponse.getStatusLine().getStatusCode()!=200){
+                      LOGGER.info("Shipments creating failed.");
+                      HttpDelete httpDelete = new HttpDelete("http://localhost:8083/deliveries/rollback/" + del_id + "");
+                      httpDelete.addHeader("token", deliveryToken);
+                      try (CloseableHttpResponse response = httpClient.execute(httpDelete)) {
+                          LOGGER.info("Delivery creating rolled back.");
+                          return 0;
+                      }
+                  }
+                  else  {LOGGER.info("Shipment created.");
+                  return del_id;}
+                }
+            } catch (IOException e) {
+                LOGGER.error("Exception caught.", e);
+            }
+          }
+          else return 0;
+        }
+        return del_id;
     }
 
 }

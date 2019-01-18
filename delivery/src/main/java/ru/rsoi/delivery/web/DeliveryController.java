@@ -65,20 +65,17 @@ public class DeliveryController {
     }
 
     @PostMapping("/createdelivery")
-    public ResponseEntity<Void> createDelivery(@RequestBody DeliveryModel model,@RequestHeader("token") String jwt) {
+    public ResponseEntity<Long> createDelivery(@RequestBody DeliveryModel model,@RequestHeader("token") String jwt) {
         if (deliveryService.parseJWT(jwt)){
-        deliveryService.createDelivery(model);
-        return ResponseEntity.ok().build();}
+        return ResponseEntity.ok(deliveryService.createDelivery(model));}
         else return ResponseEntity.status(401).build();
     }
 
     @PostMapping("/createdeliveryAgr")
-    public ResponseEntity<Void> createDeliveryAgr(@RequestBody LinkedHashMap<String,Object> model,@RequestHeader("token") String jwt) throws ParseException {
+    public ResponseEntity<Long> createDeliveryAgr(@RequestBody LinkedHashMap<String,Object> model,@RequestHeader("token") String jwt) throws ParseException {
         if (deliveryService.parseJWT(jwt)){
         DeliveryModel del = deliveryService.getModelFromHashMap(model);
-        deliveryService.createDelivery(del);
-
-        return ResponseEntity.ok().build();}
+        return ResponseEntity.ok(deliveryService.createDelivery(del));}
         else return ResponseEntity.status(401).build();
     }
 
@@ -103,12 +100,21 @@ public class DeliveryController {
     { return ResponseEntity.ok(Objects.requireNonNull(deliveryService.findAllByUserId(id, request)));}
     else return ResponseEntity.badRequest().body(null);
     }
+
     @GetMapping("/users/{id}/deliveries/{del_id}")
     public ResponseEntity<DeliveryModel> findUserDeliveryById(@PathVariable Integer del_id, @RequestHeader("token") String jwt) {
         if (deliveryService.parseJWT(jwt)){
         return ResponseEntity.ok(Objects.requireNonNull(deliveryService.getDeliveryById(del_id)));}
         else return ResponseEntity.status(401).body(null);
+    }
 
-
+    @DeleteMapping("/rollback/{del_id}")
+    public ResponseEntity<Void> rollbackCreate(@PathVariable Integer del_id,@RequestHeader("token") String jwt)
+    {
+        if (deliveryService.parseJWT(jwt)){
+            deliveryService.deleteDeliveryByUid(del_id);
+            return ResponseEntity.ok().build();
+        }
+        else return ResponseEntity.status(401).build();
     }
 }
