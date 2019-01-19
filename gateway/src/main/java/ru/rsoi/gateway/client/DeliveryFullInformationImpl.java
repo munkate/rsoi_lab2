@@ -15,9 +15,14 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
+import ru.rsoi.gateway.redisq.*;
 import ru.rsoi.gateway.response.ResponsePageImpl;
 import ru.rsoi.models.DeliveryModel;
 import ru.rsoi.models.ShipInfo;
@@ -32,6 +37,9 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeliveryFullInformationImpl.class);
     private Jedis jedis = new Jedis("127.0.0.1",6379);
+   // JedisPool pool = new JedisPool("127.0.0.1",6379);
+    private Producer producer = new Producer(jedis);
+    Consumer consumer = new Consumer(jedis);
 
     private boolean checkToken(String checkUrl, String jwt) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
@@ -48,7 +56,7 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
         }
     }
 
-    private String getToken(String service, String tokenUrl, String checkUrl)
+    public String getToken(String service, String tokenUrl, String checkUrl)
     {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             String jwt = jedis.get(service);
@@ -59,6 +67,7 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
                 try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
                     String res = EntityUtils.toString(response.getEntity());
                     jedis.append(service+":"+res,res);
+
                     return res;
                 }
             }
@@ -305,27 +314,44 @@ public class DeliveryFullInformationImpl implements DeliveryFullInformation {
     }
 
     @Override
-    public void deleteDelivery(Integer del_id, String usertoken) {
+    public void deleteDelivery(Integer del_id, String usertoken) throws InterruptedException {
         if (checkUserToken(usertoken)||usertoken==null) {
+            HttpDelete delDelete=null;
+            String token = getToken("shipments", "http://localhost:8081/shipments/token",
+                    "http://localhost:8081/shipments/checktoken");;
+            String deltoken= getToken("deliveries", "http://localhost:8083/deliveries/token",
+                    "http://localhost:8083/deliveries/checktoken");;
             try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-                String token = getToken("shipments", "http://localhost:8081/shipments/token",
-                        "http://localhost:8081/shipments/checktoken");
                 HttpDelete httpDelete = new HttpDelete("http://localhost:8081/shipments/deleteAll/" + del_id + "");
                 httpDelete.addHeader("token", token);
+
                 try (CloseableHttpResponse httpResponse = httpClient.execute(httpDelete)) {
                     LOGGER.info("All shipments with del_id=" + del_id + " deleted.");
-                }
 
-                String deltoken = getToken("deliveries", "http://localhost:8083/deliveries/token",
-                        "http://localhost:8083/deliveries/checktoken");
-                HttpDelete delDelete = new HttpDelete("http://localhost:8083/deliveries/" + del_id + "");
+                } catch (RuntimeException e) {
+                    producer.send("http://localhost:8081/shipments/deleteAll/" + del_id + "");
+                    throw new RuntimeException("Error");
+                }
+            }  catch (IOException e) {
+            producer.send("http://localhost:8081/shipments/deleteAll/" + del_id + "");
+
+            LOGGER.error("Exception caught.", e);
+        }
+            try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+                delDelete = new HttpDelete("http://localhost:8083/deliveries/" + del_id + "");
                 delDelete.addHeader("token", deltoken);
                 try (CloseableHttpResponse httpResponse = httpClient.execute(delDelete)) {
                     LOGGER.info("Delivery with id=" + del_id + " deleted.");
-                }
+                }catch (RuntimeException e){
+
+                    producer.send("http://localhost:8083/deliveries/" + del_id + "");
+                    throw new RuntimeException("Error");}
             } catch (IOException e) {
+             producer.send("http://localhost:8083/deliveries/" + del_id + "");
+
                 LOGGER.error("Exception caught.", e);
             }
+            consumer.start();
         }
 
     }

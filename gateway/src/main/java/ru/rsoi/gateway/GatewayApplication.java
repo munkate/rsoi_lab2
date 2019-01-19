@@ -12,8 +12,11 @@ import ru.rsoi.gateway.config.TrackingFilter;
 @EnableWebSecurity
 public class GatewayApplication {
 
-    public static void main(String[] args) {
+
+
+    public static void main(String[] args) throws InterruptedException {
         SpringApplication.run(GatewayApplication.class, args);
+
     }
     @Bean
     public TrackingFilter trackingFilter() {

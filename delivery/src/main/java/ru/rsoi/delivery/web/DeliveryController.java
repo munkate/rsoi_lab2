@@ -57,11 +57,11 @@ public class DeliveryController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDelivery(@PathVariable Integer id,@RequestHeader("token") String jwt) {
-        if (deliveryService.parseJWT(jwt)){
+    public ResponseEntity<Void> deleteDelivery(@PathVariable Integer id,@RequestHeader(value = "token",required = false) String jwt) {
+       /* if (deliveryService.parseJWT(jwt)||jwt==null){*/
         deliveryService.deleteDeliveryByUid(id);
-       return ResponseEntity.ok().build();}
-        else return ResponseEntity.status(401).build();
+       return ResponseEntity.ok().build();
+       // else return ResponseEntity.status(401).build();
     }
 
     @PostMapping("/createdelivery")

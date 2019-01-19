@@ -10,6 +10,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.connection.Message;
+import org.springframework.data.redis.connection.MessageListener;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import ru.rsoi.delivery.entity.Delivery;
@@ -26,7 +29,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class DeliveryServiceImpl implements DeliveryService {
+public class DeliveryServiceImpl implements DeliveryService{
+
+
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DeliveryServiceImpl.class);
     private static final String RESOURCE_ID = "deliveries";
     private static final String RESOURCE_SECRET = "deliveries";
@@ -187,7 +193,9 @@ public class DeliveryServiceImpl implements DeliveryService {
         try {
             Delivery delivery = deliveryRepository.findByUid(model.getUid());
             return delivery;
-        } catch (RuntimeException e){ return null;}
+        } catch (RuntimeException e){
+            throw new RuntimeException("Failed to get entity.");
+        }
 
     }
 

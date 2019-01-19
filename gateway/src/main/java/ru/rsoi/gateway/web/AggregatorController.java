@@ -42,8 +42,7 @@ public class AggregatorController {
 
     @DeleteMapping("/delete/users/{user_id}/deliveries/{id}")
     public ResponseEntity<Void> deleteDelivery (@PathVariable Integer id,
-                                                @RequestHeader(value ="usertoken",required = false) String token)
-    {
+                                                @RequestHeader(value ="usertoken",required = false) String token) throws InterruptedException {
 
         deliveryFullService.deleteDelivery(id,token);
         return ResponseEntity.noContent().build();
@@ -111,8 +110,5 @@ public class AggregatorController {
         deliveryFullService.createShipment(data,token);
         return ResponseEntity.ok().build();
     }
-
-
-    //TODO Прописать редиректы на shipment для post-запросов
 
 }

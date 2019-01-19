@@ -151,11 +151,12 @@ public class ShipmentServiceImpl implements ShipmentService {
 
         Shipment new_shipment = getEntity(shipment);
        try{ BeanUtils.copyProperties(shipment,new_shipment);
-        shipmentRepository.save(new_shipment);
         LOGGER.info("Shipment updated");}
         catch (RuntimeException e){
            LOGGER.error("Failed to edit shipment with id={}", shipment.getUid());
+           throw new RuntimeException("Failed to edit shipment.");
         }
+        shipmentRepository.save(new_shipment);
     }
 
     @Override
@@ -193,11 +194,12 @@ public class ShipmentServiceImpl implements ShipmentService {
     private ShipmentInfo buildModel(Shipment shipment) {
         ShipmentInfo model = new ShipmentInfo();
         try {   BeanUtils.copyProperties(shipment,model);
-            return model;}
+            }
         catch (RuntimeException e){
             LOGGER.error("Failed build model");
+            throw new RuntimeException("Bad.");
         }
-        return null;
+        return model;
     }
 
 

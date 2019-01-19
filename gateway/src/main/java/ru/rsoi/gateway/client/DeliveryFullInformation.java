@@ -10,7 +10,7 @@ public interface DeliveryFullInformation {
 
     JSONObject getUserDeliveriesFullInfo(Integer user_id, Pageable pageable, String token);
 
-    void deleteDelivery(Integer del_id, String token);
+    void deleteDelivery(Integer del_id, String token) throws InterruptedException;
 
     long createDelivery(JSONObject data, String token);
 

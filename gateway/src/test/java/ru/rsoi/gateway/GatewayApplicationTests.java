@@ -58,7 +58,7 @@ public class GatewayApplicationTests {
     }
 
     @Test
-    public void testDeleteDelivery() {
+    public void testDeleteDelivery() throws InterruptedException {
         ObjectMapper mapper = new ObjectMapper();
 
         doNothing().when(deliveryfullService).deleteDelivery(any(Integer.class),anyString());

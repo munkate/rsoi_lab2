@@ -58,7 +58,7 @@ public class TrackingFilter extends ZuulFilter {
         allowedUrls.add("/api/authentification");*/
         long accessedDate = System.currentTimeMillis();
         if (ctx.getRequest().getRequestURI().contains("/api/authentification")||ctx.getRequest().getRequestURI().contains("/api/ships")||
-                ctx.getRequest().getRequestURI().contains("/api/shipments")
+                ctx.getRequest().getRequestURI().contains("/api/shipments")||ctx.getRequest().getRequestURI().contains("/api/delete")
                 ||(ctx.getRequest().getHeader("usertoken")!=null&&
                 service.checkUserToken(ctx.getRequest().getHeader("usertoken")))
                 ||(ctx.getRequest().getHeader("Authorization")!=null&&ctx.getRequest().getHeader("Authorization").contains("Bearer"))
